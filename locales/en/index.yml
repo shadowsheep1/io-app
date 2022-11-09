@@ -444,6 +444,7 @@ profile:
     subtitle: Here you will find your personal and contact data used by the IO app.
     list:
       email: Email address
+      fiscalCode: Fiscal code 
       need_validate: To be validated
       nameSurname: Name and surname
       spid:

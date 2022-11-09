@@ -11,6 +11,7 @@ import WalletTabIcon from "../components/WalletTabIcon";
 import I18n from "../i18n";
 import PaginatedMessagesHomeScreen from "../screens/messages/paginated/MessagesHomeScreen";
 import ProfileMainScreen from "../screens/profile/ProfileMainScreen";
+import ProfileMainScreen2 from "../screens/profile/ProfileMainScreen2";
 import ServicesHomeScreen from "../screens/services/ServicesHomeScreen";
 import WalletHomeScreen from "../screens/wallet/WalletHomeScreen";
 import variables from "../theme/variables";
@@ -96,6 +97,15 @@ export const MainTabNavigator = () => {
           tabBarIcon: ({ color }) => <ProfileTabIcon color={color} />
         }}
       />
+      <Tab.Screen
+        name={ROUTES.PROFILE_MAIN2}
+        component={ProfileMainScreen2}
+        options={{
+          title: I18n.t("global.navigator.profile"),
+          tabBarIcon: ({ color }) => <ProfileTabIcon color={color} />
+        }}
+      />
+
     </Tab.Navigator>
   );
 };
