@@ -91,13 +91,14 @@ function screenContent(props: Props) {
         testID="name-surname" />
     )}
     {/* Show fiscal code */}
-    <ProfileListComponent
+    {fiscalCode && (<ProfileListComponent
       Icon={FiscalCodeIcon}
       title={I18n.t("profile.data.list.fiscalCode")}
       subTitle={fiscalCode}
       testID="fical-code" />
+    )}
     {/* Show email */}
-    <ProfileListComponent
+    {profileEmail && (<ProfileListComponent
       Icon={EmailIcon}
       title={I18n.t("profile.data.list.email")}
       subTitle={pipe(
@@ -105,6 +106,7 @@ function screenContent(props: Props) {
         O.getOrElse(() => I18n.t("global.remoteStates.notAvailable"))
       )}
       testID="email" />
+    )}
   </List>;
 }
 
@@ -134,7 +136,7 @@ export const ProfileListComponent = (props: {
   });
   return (
     <View style={style.listItem}>
-      {Icon && <Icon {...iconProps} style={style.iconItem} />}      
+      {Icon && (<Icon {...iconProps} style={style.iconItem} />)}
       <View style={style.textSection}>
         <ListItemComponent
           title={title}
