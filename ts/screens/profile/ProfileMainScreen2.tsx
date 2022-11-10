@@ -64,7 +64,7 @@ const ProfileMainScreen2 = (props: Props) => {
       accessibilityLabel={title}
       contextualHelpMarkdown={contextualHelpMarkdown}
     >
-      <ScreenContent title={I18n.t("profile.main.title")} >
+      <ScreenContent title={title} >
         {screenContent(props)}
       </ScreenContent>
     </BaseScreenComponent>
