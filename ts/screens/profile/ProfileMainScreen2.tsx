@@ -52,7 +52,7 @@ export type ContextualHelpPropsMarkdown = {
 
 const contextualHelpMarkdown: ContextualHelpPropsMarkdown = {
   title: "profile.main.contextualHelpTitle",
-  body: "profile.main.contextualHelpContent"
+  body: "profile.main.contextualHelpContent2"
 };
 
 const ProfileMainScreen2 = (props: Props) => {
@@ -63,7 +63,6 @@ const ProfileMainScreen2 = (props: Props) => {
       headerTitle={title}
       accessibilityLabel={title}
       contextualHelpMarkdown={contextualHelpMarkdown}
-      faqCategories={["profile"]}
     >
       <ScreenContent title={I18n.t("profile.main.title")} >
         {screenContent(props)}
