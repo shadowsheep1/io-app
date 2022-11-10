@@ -1,4 +1,5 @@
 import { pipe } from "fp-ts/lib/function";
+import * as pot from "@pagopa/ts-commons/lib/pot";
 import * as O from "fp-ts/lib/Option";
 import React from "react";
 import configureMockStore from "redux-mock-store";
@@ -13,6 +14,7 @@ import { applicationChangeState } from "../../../store/actions/application";
 import { appReducer } from "../../../store/reducers";
 import { GlobalState } from "../../../store/reducers/types";
 import { renderScreenFakeNavRedux } from "../../../utils/testWrapper";
+import mockedProfile from "../../../__mocks__/initializedProfile";
 import ProfileMainScreen2 from "../ProfileMainScreen2";
 
 describe("Test ProfileMainScreen2", () => {
@@ -26,7 +28,7 @@ describe("Test ProfileMainScreen2", () => {
     const { component } = renderComponent();
     
     expect(component).not.toBeNull();
-    expect(component.queryByText(I18n.t("profile.main.title"))).not.toBeNull();
+    expect(component.queryAllByText(I18n.t("profile.main.title"))).not.toBeNull();
   });
   it("should render ListItemComponent email with the right title and subtitle", () => {
     const { component, store } = renderComponent();
@@ -38,41 +40,40 @@ describe("Test ProfileMainScreen2", () => {
       profileEmailSelector(store.getState()),
       O.getOrElse(() => I18n.t("global.remoteStates.notAvailable"))
     );
-    console.log(`email 💥 ->  ${email}`);
     expect(
       component.queryByText(email)
     ).not.toBeNull();
   });
   it("should render ListItemComponent name and surname with the right title and subtitle", () => {
     const { component, store } = renderComponent();
-
     expect(component).not.toBeNull();
+    
+    const title = I18n.t("profile.data.list.nameSurname");
     const nameSurname = profileNameSurnameSelector(store.getState());
     const listItemComponent = component.queryByTestId("name-surname");
-    console.log(`name and surname 💥 -> ${nameSurname}`);
     if (nameSurname) {
       expect(listItemComponent).not.toBeNull();
-      expect(listItemComponent).toHaveTextContent(
-        I18n.t("profile.data.list.nameSurname")
-      );
-      expect(listItemComponent).toHaveTextContent(nameSurname);
+      const listItemTitleComponent = component.queryByText(title);
+      const listItemSubtitleComponent = component.queryByText(nameSurname);
+      expect(listItemTitleComponent).toHaveTextContent(title);
+      expect(listItemSubtitleComponent).toHaveTextContent(nameSurname);
     } else {
       expect(listItemComponent).toBeNull();
     }
   });
   it("should render ListItemComponent fiscal code with the right title and subtitle", () => {
     const { component, store } = renderComponent();
-
     expect(component).not.toBeNull();
+    
+    const title = I18n.t("profile.data.list.fiscalCode");
     const fiscalCode = profileFiscalCodeSelector(store.getState());
-    const listItemComponent = component.queryByTestId("fiscal-code");
-    console.log(`fiscalCode 💥 -> ${fiscalCode}`);
+    const listItemComponent = component.queryByTestId("name-surname");
     if (fiscalCode) {
       expect(listItemComponent).not.toBeNull();
-      expect(listItemComponent).toHaveTextContent(
-        I18n.t("profile.data.list.fiscalCode")
-      );
-      expect(listItemComponent).toHaveTextContent(fiscalCode);
+      const listItemTitleComponent = component.queryByText(title);
+      const listItemSubtitleComponent = component.queryByText(fiscalCode);
+      expect(listItemTitleComponent).toHaveTextContent(title);
+      expect(listItemSubtitleComponent).toHaveTextContent(fiscalCode);
     } else {
       expect(listItemComponent).toBeNull();
     }
@@ -84,7 +85,7 @@ const renderComponent = () => {
 
   const mockStore = configureMockStore<GlobalState>();
   const store: ReturnType<typeof mockStore> = mockStore({
-    ...globalState
+    ...globalState, profile: pot.some(mockedProfile)
   } as GlobalState);
 
   return {
