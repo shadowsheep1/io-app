@@ -1,9 +1,13 @@
-import { pipe } from "fp-ts/lib/function";
-import * as O from "fp-ts/lib/Option";
-import { List } from "native-base";
-import ListItemComponent from "../../components/screens/ListItemComponent";
-import * as React from "react";
 import { connect } from "react-redux";
+import * as React from "react";
+import {
+  StyleSheet,
+} from "react-native";
+import * as O from "fp-ts/lib/Option";
+import { pipe } from "fp-ts/lib/function";
+import { List, View } from "native-base";
+import { SvgProps } from "react-native-svg";
+import ListItemComponent from "../../components/screens/ListItemComponent";
 import I18n from "../../i18n";
 import BaseScreenComponent from "../../components/screens/BaseScreenComponent";
 import { TranslationKeys } from "../../../locales/locales";
@@ -21,6 +25,8 @@ import {
   profileNameSurnameSelector,
   profileFiscalCodeSelector
 } from "../../store/reducers/profile";
+import NameSurnameIcon from "../../../img/assistance/nameSurname.svg";
+import { IOStyles } from "../../../ts/components/core/variables/IOStyles";
 
 type Props = ReturnType<typeof mapStateToProps>;
 
@@ -30,7 +36,7 @@ const mapStateToProps = (state: GlobalState) => ({
     : undefined,
   walletToken: isLoggedInWithSessionInfo(state.authentication)
     ? state.authentication.sessionInfo.walletToken
-    : undefined, 
+    : undefined,
   profileEmail: profileEmailSelector(state),
   isEmailValidated: isProfileEmailValidatedSelector(state),
   hasProfileEmail: hasProfileEmailSelector(state),
@@ -49,8 +55,7 @@ const contextualHelpMarkdown: ContextualHelpPropsMarkdown = {
 };
 
 const ProfileMainScreen2 = (props: Props) => {
-  var title = I18n.t("profile.main.title")
-  var { nameSurname, profileEmail, fiscalCode } = props
+  const title = I18n.t("profile.main.title");
   return (
     <BaseScreenComponent
       goBack={true}
@@ -59,40 +64,77 @@ const ProfileMainScreen2 = (props: Props) => {
       contextualHelpMarkdown={contextualHelpMarkdown}
       faqCategories={["profile"]}
     >
-        <ScreenContent
-          title={I18n.t("profile.main.title")}
-        >
-        <List withContentLateralPadding>
-          {/* Show name and surname */}
-          {nameSurname && (
-            <ListItemComponent
-              iconName="foo"
-              title={I18n.t("profile.data.list.nameSurname")}
-              subTitle={nameSurname}
-              hideIcon
-              testID="name-surname"
-            />
-          )}
-          {/* Show fiscal code */}
-          <ListItemComponent
-            title={I18n.t("profile.data.list.fiscalCode")}
-            subTitle={fiscalCode}
-            hideIcon
-            testID="email"
-          />
-          {/* Show email */}
-          <ListItemComponent
-            title={I18n.t("profile.data.list.email")}
-            subTitle={pipe(
-              profileEmail,
-              O.getOrElse(() => I18n.t("global.remoteStates.notAvailable"))
-            )}
-            hideIcon
-            testID="email"
-          />
-          </List>
-        </ScreenContent>
+      <ScreenContent
+        title={I18n.t("profile.main.title")}
+      >
+        {screenContent(props)}
+      </ScreenContent>
     </BaseScreenComponent>
+  );
+};
+
+function screenContent(props: Props) {
+  const { nameSurname, profileEmail, fiscalCode } = props;
+  return <List withContentLateralPadding>
+    {/* Show name and surname */}
+    {nameSurname && (
+      <ProfileListComponent
+        title={I18n.t("profile.data.list.nameSurname")}
+        subTitle={nameSurname}
+        testID="name-surname" />
+    )}
+    {/* Show fiscal code */}
+    <ProfileListComponent
+      title={I18n.t("profile.data.list.fiscalCode")}
+      subTitle={fiscalCode}
+      testID="fical-code" />
+    {/* Show email */}
+    <ProfileListComponent
+      title={I18n.t("profile.data.list.email")}
+      subTitle={pipe(
+        profileEmail,
+        O.getOrElse(() => I18n.t("global.remoteStates.notAvailable"))
+      )}
+      testID="email" />
+  </List>;
+}
+
+const iconProps = { width: 36, height: "auto" };
+// TODO: manage profile icons and study flex (see if there is a standard IO Theme)
+const ProfileListComponent = (props: {
+  title: string;
+  subTitle: string | undefined;
+  testID: string;
+}) => {
+  const { title, subTitle, testID } = props;
+  const style = StyleSheet.create({
+    listItem: {
+      flex: 1,
+      flexDirection: "row",
+      backgroundColor: "#FF0000"
+    },
+    iconItem: {
+      flex: 1,
+      marginEnd: 8
+    },
+    textSection: {
+      flex: 1,
+      flexDirection: "column",
+      backgroundColor: "#FF0000"
+    }
+  });
+  return (
+    <View style={style.listItem}>
+      <NameSurnameIcon {...iconProps} style={style.iconItem} />
+      <View style={style.textSection}>
+        <ListItemComponent
+          style={{ backgroundColor: "#00FF00" }}
+          title={title}
+          subTitle={subTitle}
+          hideIcon
+          testID={testID} />
+      </View>
+    </View>
   );
 };
 
