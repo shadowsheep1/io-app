@@ -26,7 +26,8 @@ import {
   profileFiscalCodeSelector
 } from "../../store/reducers/profile";
 import NameSurnameIcon from "../../../img/assistance/nameSurname.svg";
-import { IOStyles } from "../../../ts/components/core/variables/IOStyles";
+import FiscalCodeIcon from "../../../img/assistance/fiscalCode.svg";
+import EmailIcon from "../../../img/assistance/email.svg";
 
 type Props = ReturnType<typeof mapStateToProps>;
 
@@ -64,9 +65,7 @@ const ProfileMainScreen2 = (props: Props) => {
       contextualHelpMarkdown={contextualHelpMarkdown}
       faqCategories={["profile"]}
     >
-      <ScreenContent
-        title={I18n.t("profile.main.title")}
-      >
+      <ScreenContent title={I18n.t("profile.main.title")} >
         {screenContent(props)}
       </ScreenContent>
     </BaseScreenComponent>
@@ -75,21 +74,31 @@ const ProfileMainScreen2 = (props: Props) => {
 
 function screenContent(props: Props) {
   const { nameSurname, profileEmail, fiscalCode } = props;
-  return <List withContentLateralPadding>
+  const style = StyleSheet.create({
+    list: {
+      marginTop: 8
+    }
+  });
+  return <List
+    style={style.list}
+    withContentLateralPadding>
     {/* Show name and surname */}
     {nameSurname && (
       <ProfileListComponent
+        Icon={NameSurnameIcon}
         title={I18n.t("profile.data.list.nameSurname")}
         subTitle={nameSurname}
         testID="name-surname" />
     )}
     {/* Show fiscal code */}
     <ProfileListComponent
+      Icon={FiscalCodeIcon}
       title={I18n.t("profile.data.list.fiscalCode")}
       subTitle={fiscalCode}
       testID="fical-code" />
     {/* Show email */}
     <ProfileListComponent
+      Icon={EmailIcon}
       title={I18n.t("profile.data.list.email")}
       subTitle={pipe(
         profileEmail,
@@ -99,36 +108,35 @@ function screenContent(props: Props) {
   </List>;
 }
 
-const iconProps = { width: 36, height: "auto" };
-// TODO: manage profile icons and study flex (see if there is a standard IO Theme)
-const ProfileListComponent = (props: {
+// TODO: manage profile icons and study flex (see if there is a standard IO Theme
+export const ProfileListComponent = (props: {
+  Icon?: React.FC<SvgProps>;
   title: string;
   subTitle: string | undefined;
   testID: string;
 }) => {
-  const { title, subTitle, testID } = props;
+  const { Icon, title, subTitle, testID } = props;
+  const iconProps = { width: 28, height: "auto" };
   const style = StyleSheet.create({
     listItem: {
       flex: 1,
       flexDirection: "row",
-      backgroundColor: "#FF0000"
     },
     iconItem: {
       flex: 1,
-      marginEnd: 8
+      marginEnd: 16,
+      marginStart: 8,
     },
     textSection: {
       flex: 1,
       flexDirection: "column",
-      backgroundColor: "#FF0000"
     }
   });
   return (
     <View style={style.listItem}>
-      <NameSurnameIcon {...iconProps} style={style.iconItem} />
+      {Icon && <Icon {...iconProps} style={style.iconItem} />}      
       <View style={style.textSection}>
         <ListItemComponent
-          style={{ backgroundColor: "#00FF00" }}
           title={title}
           subTitle={subTitle}
           hideIcon
