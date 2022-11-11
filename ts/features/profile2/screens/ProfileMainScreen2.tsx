@@ -62,6 +62,10 @@ const ProfileMainScreen2 = (props: Props) => {
   
   React.useEffect(() => {
     dispatch(initializeProfileRequest());
+  }, []);
+
+  React.useEffect(() => {
+    console.log("💧");
   });
   
   return (

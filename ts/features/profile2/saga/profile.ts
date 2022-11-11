@@ -19,7 +19,8 @@ import { BackendClient } from "../../../api/backend";
 import I18n from "../../../i18n";
 import { sessionExpired } from "../../../store/actions/authentication";
 import {
-  profileLoadFailure,
+  profileLoadFailure, 
+  profileLoadSuccess,
 } from "../../../store/actions/profile";
 import { ReduxSagaEffect, SagaCallReturnType } from "../../../types/utils";
 import { convertUnknownToError } from "../../../utils/errors";
@@ -29,6 +30,7 @@ import {
 } from "../../../store/reducers/authentication";
 import { authenticationSaga } from "../../../sagas/startup/authenticationSaga";
 import { initializeProfileRequest } from "../store/actions/profile";
+import { popToTop } from "@react-navigation/compat/lib/typescript/src/StackActions";
 
 export const environment: string = Config.ENVIRONMENT;
 export const apiUrlPrefix: string = Config.API_URL_PREFIX;
@@ -106,7 +108,8 @@ export function* loadProfile(
 function* checkBackendProfile(profile: O.Option<InitializedProfile>) {
   if (O.isSome(profile)) {
     console.log(`🦄 -> ${profile}`);
+    yield* put(profileLoadSuccess(profile.value));
   } else {
-    yield* put(sessionExpired());
+    yield* put(sessionExpired()); 
   }
 }
