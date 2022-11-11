@@ -26,28 +26,30 @@ describe("Test ProfileMainScreen2", () => {
   });
   it("should render header H3 component with title", () => {
     const { component } = renderComponent();
-    
+
     expect(component).not.toBeNull();
-    expect(component.queryAllByText(I18n.t("profile.main.title"))).not.toBeNull();
+    expect(
+      component.queryAllByText(I18n.t("profile.main.title"))
+    ).not.toBeNull();
   });
   it("should render ListItemComponent email with the right title and subtitle", () => {
     const { component, store } = renderComponent();
 
     expect(component).not.toBeNull();
     expect(component.queryByTestId("email")).not.toBeNull();
-    expect(component.queryByText(I18n.t("profile.data.list.email"))).not.toBeNull();
+    expect(
+      component.queryByText(I18n.t("profile.data.list.email"))
+    ).not.toBeNull();
     const email = pipe(
       profileEmailSelector(store.getState()),
       O.getOrElse(() => I18n.t("global.remoteStates.notAvailable"))
     );
-    expect(
-      component.queryByText(email)
-    ).not.toBeNull();
+    expect(component.queryByText(email)).not.toBeNull();
   });
   it("should render ListItemComponent name and surname with the right title and subtitle", () => {
     const { component, store } = renderComponent();
     expect(component).not.toBeNull();
-    
+
     const title = I18n.t("profile.data.list.nameSurname");
     const nameSurname = profileNameSurnameSelector(store.getState());
     const listItemComponent = component.queryByTestId("name-surname");
@@ -64,7 +66,7 @@ describe("Test ProfileMainScreen2", () => {
   it("should render ListItemComponent fiscal code with the right title and subtitle", () => {
     const { component, store } = renderComponent();
     expect(component).not.toBeNull();
-    
+
     const title = I18n.t("profile.data.list.fiscalCode");
     const fiscalCode = profileFiscalCodeSelector(store.getState());
     const listItemComponent = component.queryByTestId("name-surname");
@@ -85,7 +87,8 @@ const renderComponent = () => {
 
   const mockStore = configureMockStore<GlobalState>();
   const store: ReturnType<typeof mockStore> = mockStore({
-    ...globalState, profile: pot.some(mockedProfile)
+    ...globalState,
+    profile: pot.some(mockedProfile)
   } as GlobalState);
 
   return {

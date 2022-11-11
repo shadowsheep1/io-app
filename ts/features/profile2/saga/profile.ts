@@ -4,31 +4,21 @@
 import * as E from "fp-ts/lib/Either";
 import { pipe } from "fp-ts/lib/function";
 import * as O from "fp-ts/lib/Option";
-import {
-  delay,
-  call,
-  put,
-  select,
-  takeLatest,
-} from "typed-redux-saga/macro";
+import { delay, call, put, select, takeLatest } from "typed-redux-saga/macro";
 import Config from "react-native-config";
-import {
-  getType
-} from "typesafe-actions";
+import { getType } from "typesafe-actions";
 import { InitializedProfile } from "../../../../definitions/backend/InitializedProfile";
 import { BackendClient } from "../../../api/backend";
 import I18n from "../../../i18n";
 import { sessionExpired } from "../../../store/actions/authentication";
 import {
   profileLoadFailure,
-  profileLoadSuccess,
+  profileLoadSuccess
 } from "../../../store/actions/profile";
 import { ReduxSagaEffect, SagaCallReturnType } from "../../../types/utils";
 import { convertUnknownToError } from "../../../utils/errors";
 import { readablePrivacyReport } from "../../../utils/reporters";
-import {
-  sessionTokenSelector
-} from "../../../store/reducers/authentication";
+import { sessionTokenSelector } from "../../../store/reducers/authentication";
 import { authenticationSaga } from "../../../sagas/startup/authenticationSaga";
 import { initializeProfileRequest } from "../store/actions/profile";
 import { Millisecond } from "@pagopa/ts-commons/lib/units";
@@ -41,11 +31,7 @@ export function* initializeProfileRequestsSaga(): Iterator<ReduxSagaEffect> {
   yield* takeLatest(getType(initializeProfileRequest), initializeProfile);
 }
 
-export function* initializeProfile(): Generator<
-  ReduxSagaEffect,
-  void,
-  any
-> {
+export function* initializeProfile(): Generator<ReduxSagaEffect, void, any> {
   // Whether the user is currently logged in.
   const previousSessionToken: ReturnType<typeof sessionTokenSelector> =
     yield* select(sessionTokenSelector);
@@ -86,7 +72,9 @@ export function* loadProfile(
     const backendProfile = pipe(
       response,
       E.foldW(
-        reason => { throw Error(readablePrivacyReport(reason)); },
+        reason => {
+          throw Error(readablePrivacyReport(reason));
+        },
         response => {
           if (response.status === 200) {
             return O.some(response.value);
@@ -97,7 +85,8 @@ export function* loadProfile(
           throw response
             ? Error(`response status ${response.status}`)
             : Error(I18n.t("profile.errors.load"));
-        })
+        }
+      )
     );
     yield* checkBackendProfile(backendProfile);
     return backendProfile;

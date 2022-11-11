@@ -1,8 +1,6 @@
 import { connect, useDispatch } from "react-redux";
 import * as React from "react";
-import {
-  StyleSheet,
-} from "react-native";
+import { StyleSheet } from "react-native";
 import * as O from "fp-ts/lib/Option";
 import { pipe } from "fp-ts/lib/function";
 import { List, View } from "native-base";
@@ -17,7 +15,7 @@ import {
 } from "../../../store/reducers/authentication";
 import { GlobalState } from "../../../store/reducers/types";
 import { withLightModalContext } from "../../../components/helpers/withLightModalContext";
-import ScreenContent from '../../../components/screens/ScreenContent';
+import ScreenContent from "../../../components/screens/ScreenContent";
 import {
   hasProfileEmailSelector,
   isProfileEmailValidatedSelector,
@@ -59,7 +57,7 @@ const contextualHelpMarkdown: ContextualHelpPropsMarkdown = {
 const ProfileMainScreen2 = (props: Props) => {
   const title = I18n.t("profile.main.title");
   const dispatch = useDispatch();
-  
+
   React.useEffect(() => {
     dispatch(initializeProfileRequest());
   }, []);
@@ -71,9 +69,7 @@ const ProfileMainScreen2 = (props: Props) => {
       accessibilityLabel={title}
       contextualHelpMarkdown={contextualHelpMarkdown}
     >
-      <ScreenContent title={title} >
-        {screenContent(props)}
-      </ScreenContent>
+      <ScreenContent title={title}>{screenContent(props)}</ScreenContent>
     </BaseScreenComponent>
   );
 };
@@ -85,35 +81,40 @@ function screenContent(props: Props) {
       marginTop: 8
     }
   });
-  return <List
-    style={style.list}
-    withContentLateralPadding>
-    {/* Show name and surname */}
-    {nameSurname && (
-      <ProfileListComponent
-        Icon={NameSurnameIcon}
-        title={I18n.t("profile.data.list.nameSurname")}
-        subTitle={nameSurname}
-        testID="name-surname" />
-    )}
-    {/* Show fiscal code */}
-    {fiscalCode && (<ProfileListComponent
-      Icon={FiscalCodeIcon}
-      title={I18n.t("profile.data.list.fiscalCode")}
-      subTitle={fiscalCode}
-      testID="fical-code" />
-    )}
-    {/* Show email */}
-    {profileEmail && (<ProfileListComponent
-      Icon={EmailIcon}
-      title={I18n.t("profile.data.list.email")}
-      subTitle={pipe(
-        profileEmail,
-        O.getOrElse(() => I18n.t("global.remoteStates.notAvailable"))
+  return (
+    <List style={style.list} withContentLateralPadding>
+      {/* Show name and surname */}
+      {nameSurname && (
+        <ProfileListComponent
+          Icon={NameSurnameIcon}
+          title={I18n.t("profile.data.list.nameSurname")}
+          subTitle={nameSurname}
+          testID="name-surname"
+        />
       )}
-      testID="email" />
-    )}
-  </List>;
+      {/* Show fiscal code */}
+      {fiscalCode && (
+        <ProfileListComponent
+          Icon={FiscalCodeIcon}
+          title={I18n.t("profile.data.list.fiscalCode")}
+          subTitle={fiscalCode}
+          testID="fical-code"
+        />
+      )}
+      {/* Show email */}
+      {profileEmail && (
+        <ProfileListComponent
+          Icon={EmailIcon}
+          title={I18n.t("profile.data.list.email")}
+          subTitle={pipe(
+            profileEmail,
+            O.getOrElse(() => I18n.t("global.remoteStates.notAvailable"))
+          )}
+          testID="email"
+        />
+      )}
+    </List>
+  );
 }
 
 // TODO: manage profile icons and study flex (see if there is a standard IO Theme
@@ -128,32 +129,33 @@ export const ProfileListComponent = (props: {
   const style = StyleSheet.create({
     listItem: {
       flex: 1,
-      flexDirection: "row",
+      flexDirection: "row"
     },
     iconItem: {
       flex: 1,
       marginEnd: 16,
-      marginStart: 8,
+      marginStart: 8
     },
     textSection: {
       flex: 1,
-      flexDirection: "column",
+      flexDirection: "column"
     }
   });
   return (
     <View style={style.listItem}>
-      {Icon && (<Icon {...iconProps} style={style.iconItem} />)}
+      {Icon && <Icon {...iconProps} style={style.iconItem} />}
       <View style={style.textSection}>
         <ListItemComponent
           title={title}
           subTitle={subTitle}
           hideIcon
-          testID={testID} />
+          testID={testID}
+        />
       </View>
     </View>
   );
 };
 
-export default connect(
-  mapStateToProps
-)(withLightModalContext(ProfileMainScreen2));
+export default connect(mapStateToProps)(
+  withLightModalContext(ProfileMainScreen2)
+);

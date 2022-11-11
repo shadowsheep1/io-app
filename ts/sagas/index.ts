@@ -7,7 +7,7 @@ import backendStatusSaga from "./backendStatus";
 import { watchContentSaga } from "./contentLoaders";
 import { loadSystemPreferencesSaga } from "./preferences";
 import { startupSaga } from "./startup";
-import { initializeProfileRequestsSaga } from "../features/profile2/saga/profile"
+import { initializeProfileRequestsSaga } from "../features/profile2/saga/profile";
 
 import {
   watchBackToEntrypointPaymentSaga,

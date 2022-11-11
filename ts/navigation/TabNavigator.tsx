@@ -97,7 +97,6 @@ export const MainTabNavigator = () => {
           tabBarIcon: ({ color }) => <ProfileTabIcon color={color} />
         }}
       />
-
     </Tab.Navigator>
   );
 };
