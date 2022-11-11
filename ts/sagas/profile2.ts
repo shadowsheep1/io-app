@@ -6,8 +6,12 @@ import { pipe } from "fp-ts/lib/function";
 import * as O from "fp-ts/lib/Option";
 import {
   call,
+  delay,
   put,
+  select
 } from "typed-redux-saga/macro";
+import Config from "react-native-config";
+import { Millisecond } from "@pagopa/ts-commons/lib/units";
 import { InitializedProfile } from "../../definitions/backend/InitializedProfile";
 import { BackendClient } from "../api/backend";
 import I18n from "../i18n";
@@ -19,6 +23,47 @@ import {
 import { ReduxSagaEffect, SagaCallReturnType } from "../types/utils";
 import { convertUnknownToError } from "../utils/errors";
 import { readablePrivacyReport } from "../utils/reporters";
+import {
+  sessionTokenSelector
+} from "../store/reducers/authentication";
+import { authenticationSaga } from "./startup/authenticationSaga";
+
+const WAIT_INITIALIZE_PROFILE = 5000 as Millisecond;
+export const environment: string = Config.ENVIRONMENT;
+export const apiUrlPrefix: string = Config.API_URL_PREFIX;
+
+export function* initializeProfile(): Generator<
+  ReduxSagaEffect,
+  void,
+  any
+> {
+
+  // Whether the user is currently logged in.
+  const previousSessionToken: ReturnType<typeof sessionTokenSelector> =
+    yield* select(sessionTokenSelector);
+
+  const sessionToken: SagaCallReturnType<typeof authenticationSaga> =
+    previousSessionToken
+      ? previousSessionToken
+      : yield* call(authenticationSaga);
+
+  const backendClient: ReturnType<typeof BackendClient> = BackendClient(
+    apiUrlPrefix,
+    sessionToken
+  );
+
+  // Load the profile info
+  const maybeUserProfile: SagaCallReturnType<typeof loadProfile> = yield* call(
+    loadProfile,
+    backendClient.getProfile
+  );
+
+  if (O.isNone(maybeUserProfile)) {
+    // Start again if we can't load the profile but wait a while
+    console.log("💥 -> profile not loaded");
+  }
+
+}
 
 // A saga to load the Profile.
 export function* loadProfile(
@@ -33,25 +78,25 @@ export function* loadProfile(
     const backendProfile = pipe(
       response,
       E.foldW(
-        reason => { throw Error(readablePrivacyReport(reason)) },
+        reason => { throw Error(readablePrivacyReport(reason)); },
         response => {
-        if (response.status === 200) {
-          return O.some(response.value);
-        }
-        if (response.status === 401) {
-          return O.none
-        }
-        throw response
-          ? Error(`response status ${response.status}`)
-          : Error(I18n.t("profile.errors.load"));
-      })
-    )
+          if (response.status === 200) {
+            return O.some(response.value);
+          }
+          if (response.status === 401) {
+            return O.none;
+          }
+          throw response
+            ? Error(`response status ${response.status}`)
+            : Error(I18n.t("profile.errors.load"));
+        })
+    );
     yield* checkBackendProfile(backendProfile);
-    return backendProfile
+    return backendProfile;
   } catch (e) {
     yield* put(profileLoadFailure(convertUnknownToError(e)));
   }
-  return O.none
+  return O.none;
 }
 
 function* checkBackendProfile(profile: O.Option<InitializedProfile>) {
