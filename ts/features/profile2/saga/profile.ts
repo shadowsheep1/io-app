@@ -10,7 +10,6 @@ import {
   put,
   select,
   takeLatest,
-  retry
 } from "typed-redux-saga/macro";
 import Config from "react-native-config";
 import {
@@ -21,7 +20,7 @@ import { BackendClient } from "../../../api/backend";
 import I18n from "../../../i18n";
 import { sessionExpired } from "../../../store/actions/authentication";
 import {
-  profileLoadFailure, 
+  profileLoadFailure,
   profileLoadSuccess,
 } from "../../../store/actions/profile";
 import { ReduxSagaEffect, SagaCallReturnType } from "../../../types/utils";
@@ -34,8 +33,7 @@ import { authenticationSaga } from "../../../sagas/startup/authenticationSaga";
 import { initializeProfileRequest } from "../store/actions/profile";
 import { Millisecond } from "@pagopa/ts-commons/lib/units";
 
-const BACKEND_PROFILE_LOAD_RETRY = 10 
-const BACKEND_PROFILE_LOAD_INTERVAL = (60 * 1000) as Millisecond;
+const BACKEND_PROFILE_LOAD_INTERVAL = (6 * 1000) as Millisecond;
 const apiUrlPrefix: string = Config.API_URL_PREFIX;
 
 // This function listens for Profile refresh requests and calls the needed saga.
@@ -69,9 +67,9 @@ export function* initializeProfile(): Generator<
   );
 
   if (O.isNone(maybeUserProfile)) {
-    // TODO: - Start again if we can't load the profile but wait a while
-    delay(BACKEND_PROFILE_LOAD_INTERVAL);
-    retry(BACKEND_PROFILE_LOAD_RETRY, BACKEND_PROFILE_LOAD_INTERVAL, initializeProfile);
+    yield* delay(BACKEND_PROFILE_LOAD_INTERVAL);
+    yield* put(initializeProfileRequest());
+    return;
   }
 }
 
@@ -83,8 +81,8 @@ export function* loadProfile(
   O.Option<InitializedProfile>,
   SagaCallReturnType<typeof getProfile>
 > {
-  const response = yield* call(getProfile, {});
   try {
+    const response = yield* call(getProfile, {});
     const backendProfile = pipe(
       response,
       E.foldW(
@@ -113,6 +111,6 @@ function* checkBackendProfile(profile: O.Option<InitializedProfile>) {
   if (O.isSome(profile)) {
     yield* put(profileLoadSuccess(profile.value));
   } else {
-    yield* put(sessionExpired()); 
+    yield* put(sessionExpired());
   }
 }
