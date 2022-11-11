@@ -5,10 +5,12 @@ import * as E from "fp-ts/lib/Either";
 import { pipe } from "fp-ts/lib/function";
 import * as O from "fp-ts/lib/Option";
 import {
+  delay,
   call,
   put,
   select,
-  takeLatest
+  takeLatest,
+  retry
 } from "typed-redux-saga/macro";
 import Config from "react-native-config";
 import {
@@ -30,10 +32,11 @@ import {
 } from "../../../store/reducers/authentication";
 import { authenticationSaga } from "../../../sagas/startup/authenticationSaga";
 import { initializeProfileRequest } from "../store/actions/profile";
-import { popToTop } from "@react-navigation/compat/lib/typescript/src/StackActions";
+import { Millisecond } from "@pagopa/ts-commons/lib/units";
 
-export const environment: string = Config.ENVIRONMENT;
-export const apiUrlPrefix: string = Config.API_URL_PREFIX;
+const BACKEND_PROFILE_LOAD_RETRY = 10 
+const BACKEND_PROFILE_LOAD_INTERVAL = (60 * 1000) as Millisecond;
+const apiUrlPrefix: string = Config.API_URL_PREFIX;
 
 // This function listens for Profile refresh requests and calls the needed saga.
 export function* initializeProfileRequestsSaga(): Iterator<ReduxSagaEffect> {
@@ -67,7 +70,8 @@ export function* initializeProfile(): Generator<
 
   if (O.isNone(maybeUserProfile)) {
     // TODO: - Start again if we can't load the profile but wait a while
-    console.log("💥 -> profile not loaded");
+    delay(BACKEND_PROFILE_LOAD_INTERVAL);
+    retry(BACKEND_PROFILE_LOAD_RETRY, BACKEND_PROFILE_LOAD_INTERVAL, initializeProfile);
   }
 }
 
