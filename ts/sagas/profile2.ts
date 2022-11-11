@@ -1,8 +1,6 @@
 /**
  * A saga that manages the Profile.
  */
-import { back } from "@react-navigation/compat/lib/typescript/src/NavigationActions";
-import * as TE from "fp-ts/lib/TaskEither";
 import * as E from "fp-ts/lib/Either";
 import { pipe } from "fp-ts/lib/function";
 import * as O from "fp-ts/lib/Option";
@@ -34,14 +32,11 @@ export function* loadProfile(
   try {
     const backendProfile = pipe(
       response,
-      E.mapLeft(
-        reason => { throw Error(readablePrivacyReport(reason)) }
-      ),
       E.foldW(
-        reason => { throw Error(reason) },
+        reason => { throw Error(readablePrivacyReport(reason)) },
         response => {
         if (response.status === 200) {
-          return O.some(response.value as InitializedProfile);
+          return O.some(response.value);
         }
         if (response.status === 401) {
           return O.none
@@ -49,7 +44,7 @@ export function* loadProfile(
         throw response
           ? Error(`response status ${response.status}`)
           : Error(I18n.t("profile.errors.load"));
-      }),
+      })
     )
     yield* checkBackendProfile(backendProfile);
     return backendProfile
@@ -59,12 +54,10 @@ export function* loadProfile(
   return O.none
 }
 
-const toMaybeProfileLoadSuccess = O.map(checkBackendProfile);
-
-function* checkBackendProfile(backendProfile: O.Option<InitializedProfile>) {
-  if (O.isSome(backendProfile)) {
+function* checkBackendProfile(profile: O.Option<InitializedProfile>) {
+  if (O.isSome(profile)) {
     yield* put(
-      profileLoadSuccess(backendProfile.value)
+      profileLoadSuccess(profile.value)
     );
   } else {
     yield* put(sessionExpired());
