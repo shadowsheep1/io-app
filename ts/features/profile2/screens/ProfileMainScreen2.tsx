@@ -64,10 +64,6 @@ const ProfileMainScreen2 = (props: Props) => {
     dispatch(initializeProfileRequest());
   }, []);
 
-  React.useEffect(() => {
-    console.log("💧");
-  });
-  
   return (
     <BaseScreenComponent
       goBack={true}

@@ -107,7 +107,6 @@ export function* loadProfile(
 
 function* checkBackendProfile(profile: O.Option<InitializedProfile>) {
   if (O.isSome(profile)) {
-    console.log(`🦄 -> ${profile}`);
     yield* put(profileLoadSuccess(profile.value));
   } else {
     yield* put(sessionExpired()); 
