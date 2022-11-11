@@ -7,6 +7,7 @@ import * as O from "fp-ts/lib/Option";
 import { delay, call, put, select, takeLatest } from "typed-redux-saga/macro";
 import Config from "react-native-config";
 import { getType } from "typesafe-actions";
+import { Millisecond } from "@pagopa/ts-commons/lib/units";
 import { InitializedProfile } from "../../../../definitions/backend/InitializedProfile";
 import { BackendClient } from "../../../api/backend";
 import I18n from "../../../i18n";
@@ -21,7 +22,6 @@ import { readablePrivacyReport } from "../../../utils/reporters";
 import { sessionTokenSelector } from "../../../store/reducers/authentication";
 import { authenticationSaga } from "../../../sagas/startup/authenticationSaga";
 import { initializeProfileRequest } from "../store/actions/profile";
-import { Millisecond } from "@pagopa/ts-commons/lib/units";
 
 const BACKEND_PROFILE_LOAD_INTERVAL = (6 * 1000) as Millisecond;
 const apiUrlPrefix: string = Config.API_URL_PREFIX;
@@ -55,7 +55,6 @@ export function* initializeProfile(): Generator<ReduxSagaEffect, void, any> {
   if (O.isNone(maybeUserProfile)) {
     yield* delay(BACKEND_PROFILE_LOAD_INTERVAL);
     yield* put(initializeProfileRequest());
-    return;
   }
 }
 
