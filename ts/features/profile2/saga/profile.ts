@@ -6,38 +6,43 @@ import { pipe } from "fp-ts/lib/function";
 import * as O from "fp-ts/lib/Option";
 import {
   call,
-  delay,
   put,
-  select
+  select,
+  takeLatest
 } from "typed-redux-saga/macro";
 import Config from "react-native-config";
-import { Millisecond } from "@pagopa/ts-commons/lib/units";
-import { InitializedProfile } from "../../definitions/backend/InitializedProfile";
-import { BackendClient } from "../api/backend";
-import I18n from "../i18n";
-import { sessionExpired } from "../store/actions/authentication";
+import {
+  getType
+} from "typesafe-actions";
+import { InitializedProfile } from "../../../../definitions/backend/InitializedProfile";
+import { BackendClient } from "../../../api/backend";
+import I18n from "../../../i18n";
+import { sessionExpired } from "../../../store/actions/authentication";
 import {
   profileLoadFailure,
-  profileLoadSuccess,
-} from "../store/actions/profile";
-import { ReduxSagaEffect, SagaCallReturnType } from "../types/utils";
-import { convertUnknownToError } from "../utils/errors";
-import { readablePrivacyReport } from "../utils/reporters";
+} from "../../../store/actions/profile";
+import { ReduxSagaEffect, SagaCallReturnType } from "../../../types/utils";
+import { convertUnknownToError } from "../../../utils/errors";
+import { readablePrivacyReport } from "../../../utils/reporters";
 import {
   sessionTokenSelector
-} from "../store/reducers/authentication";
-import { authenticationSaga } from "./startup/authenticationSaga";
+} from "../../../store/reducers/authentication";
+import { authenticationSaga } from "../../../sagas/startup/authenticationSaga";
+import { initializeProfileRequest } from "../store/actions/profile";
 
-const WAIT_INITIALIZE_PROFILE = 5000 as Millisecond;
 export const environment: string = Config.ENVIRONMENT;
 export const apiUrlPrefix: string = Config.API_URL_PREFIX;
+
+// This function listens for Profile refresh requests and calls the needed saga.
+export function* initializeProfileRequestsSaga(): Iterator<ReduxSagaEffect> {
+  yield* takeLatest(getType(initializeProfileRequest), initializeProfile);
+}
 
 export function* initializeProfile(): Generator<
   ReduxSagaEffect,
   void,
   any
 > {
-
   // Whether the user is currently logged in.
   const previousSessionToken: ReturnType<typeof sessionTokenSelector> =
     yield* select(sessionTokenSelector);
@@ -59,10 +64,9 @@ export function* initializeProfile(): Generator<
   );
 
   if (O.isNone(maybeUserProfile)) {
-    // Start again if we can't load the profile but wait a while
+    // TODO: - Start again if we can't load the profile but wait a while
     console.log("💥 -> profile not loaded");
   }
-
 }
 
 // A saga to load the Profile.
@@ -101,9 +105,7 @@ export function* loadProfile(
 
 function* checkBackendProfile(profile: O.Option<InitializedProfile>) {
   if (O.isSome(profile)) {
-    yield* put(
-      profileLoadSuccess(profile.value)
-    );
+    console.log(`🦄 -> ${profile}`);
   } else {
     yield* put(sessionExpired());
   }

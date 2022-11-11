@@ -1,4 +1,4 @@
-import { connect } from "react-redux";
+import { connect, useDispatch } from "react-redux";
 import * as React from "react";
 import {
   StyleSheet,
@@ -7,27 +7,28 @@ import * as O from "fp-ts/lib/Option";
 import { pipe } from "fp-ts/lib/function";
 import { List, View } from "native-base";
 import { SvgProps } from "react-native-svg";
-import ListItemComponent from "../../components/screens/ListItemComponent";
-import I18n from "../../i18n";
-import BaseScreenComponent from "../../components/screens/BaseScreenComponent";
-import { TranslationKeys } from "../../../locales/locales";
+import ListItemComponent from "../../../components/screens/ListItemComponent";
+import I18n from "../../../i18n";
+import BaseScreenComponent from "../../../components/screens/BaseScreenComponent";
+import { TranslationKeys } from "../../../../locales/locales";
 import {
   isLoggedIn,
   isLoggedInWithSessionInfo
-} from "../../store/reducers/authentication";
-import { GlobalState } from "../../store/reducers/types";
-import { withLightModalContext } from "../../components/helpers/withLightModalContext";
-import ScreenContent from '../../components/screens/ScreenContent';
+} from "../../../store/reducers/authentication";
+import { GlobalState } from "../../../store/reducers/types";
+import { withLightModalContext } from "../../../components/helpers/withLightModalContext";
+import ScreenContent from '../../../components/screens/ScreenContent';
 import {
   hasProfileEmailSelector,
   isProfileEmailValidatedSelector,
   profileEmailSelector,
   profileNameSurnameSelector,
   profileFiscalCodeSelector
-} from "../../store/reducers/profile";
-import NameSurnameIcon from "../../../img/assistance/nameSurname.svg";
-import FiscalCodeIcon from "../../../img/assistance/fiscalCode.svg";
-import EmailIcon from "../../../img/assistance/email.svg";
+} from "../../../store/reducers/profile";
+import NameSurnameIcon from "../../../../img/assistance/nameSurname.svg";
+import FiscalCodeIcon from "../../../../img/assistance/fiscalCode.svg";
+import EmailIcon from "../../../../img/assistance/email.svg";
+import { initializeProfileRequest } from "../store/actions/profile";
 
 type Props = ReturnType<typeof mapStateToProps>;
 
@@ -57,6 +58,12 @@ const contextualHelpMarkdown: ContextualHelpPropsMarkdown = {
 
 const ProfileMainScreen2 = (props: Props) => {
   const title = I18n.t("profile.main.title");
+  const dispatch = useDispatch();
+  
+  React.useEffect(() => {
+    dispatch(initializeProfileRequest());
+  });
+  
   return (
     <BaseScreenComponent
       goBack={true}
