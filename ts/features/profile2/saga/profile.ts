@@ -27,7 +27,7 @@ const BACKEND_PROFILE_RETRY_DELAY_INTERVAL = (6 * 1000) as Millisecond;
 const apiUrlPrefix: string = Config.API_URL_PREFIX;
 
 // This function listens for Profile refresh requests and calls the needed saga.
-export function* refreshProfileOnMountOfTheNewProfileRequestsSaga(): Iterator<ReduxSagaEffect> {
+export function* refreshProfileOnMountOfTheNewProfilePageSaga(): Iterator<ReduxSagaEffect> {
   yield* takeLatest(getType(initializeProfileRequest), refreshProfile);
 }
 

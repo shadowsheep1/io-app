@@ -3,7 +3,7 @@
  */
 import { all, call } from "typed-redux-saga/macro";
 import versionInfoSaga from "../common/versionInfo/saga/versionInfo";
-import { refreshProfileOnMountOfTheNewProfileRequestsSaga } from "../features/profile2/saga/profile";
+import { refreshProfileOnMountOfTheNewProfilePageSaga } from "../features/profile2/saga/profile";
 import backendStatusSaga from "./backendStatus";
 import { watchContentSaga } from "./contentLoaders";
 import { loadSystemPreferencesSaga } from "./preferences";
@@ -23,6 +23,6 @@ export default function* root() {
     call(watchContentSaga),
     call(watchPaymentInitializeSaga),
     call(watchBackToEntrypointPaymentSaga),
-    call(refreshProfileOnMountOfTheNewProfileRequestsSaga)
+    call(refreshProfileOnMountOfTheNewProfilePageSaga)
   ]);
 }
