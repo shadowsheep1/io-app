@@ -11,7 +11,7 @@ import WalletTabIcon from "../components/WalletTabIcon";
 import I18n from "../i18n";
 import PaginatedMessagesHomeScreen from "../screens/messages/paginated/MessagesHomeScreen";
 import ProfileMainScreen from "../screens/profile/ProfileMainScreen";
-import ProfileMainScreen2 from "../features/profile2/screens/ProfileMainScreen2";
+import ProfileMainScreen2 from "../features/profile2/screens/ProfileMainScreen";
 import ServicesHomeScreen from "../screens/services/ServicesHomeScreen";
 import WalletHomeScreen from "../screens/wallet/WalletHomeScreen";
 import variables from "../theme/variables";

@@ -15,7 +15,7 @@ import { appReducer } from "../../../store/reducers";
 import { GlobalState } from "../../../store/reducers/types";
 import { renderScreenFakeNavRedux } from "../../../utils/testWrapper";
 import mockedProfile from "../../../__mocks__/initializedProfile";
-import ProfileMainScreen2 from "../../../features/profile2/screens/ProfileMainScreen2";
+import ProfileMainScreen2 from "../screens/ProfileMainScreen";
 
 describe("Test ProfileMainScreen2", () => {
   jest.useFakeTimers();
