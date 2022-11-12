@@ -27,7 +27,7 @@ const BACKEND_PROFILE_LOAD_INTERVAL = (6 * 1000) as Millisecond;
 const apiUrlPrefix: string = Config.API_URL_PREFIX;
 
 // This function listens for Profile refresh requests and calls the needed saga.
-export function* initializeProfileRequestsSaga(): Iterator<ReduxSagaEffect> {
+export function* refreshProfileOnMountOfTheNewProfileRequestsSaga(): Iterator<ReduxSagaEffect> {
   yield* takeLatest(getType(initializeProfileRequest), initializeProfile);
 }
 
@@ -53,6 +53,10 @@ export function* initializeProfile(): Generator<ReduxSagaEffect, void, any> {
   );
 
   if (O.isNone(maybeUserProfile)) {
+    /**
+     * If we didn't succeed, 
+     * we try again after waiting some time.
+     */
     yield* delay(BACKEND_PROFILE_LOAD_INTERVAL);
     yield* put(initializeProfileRequest());
   }
@@ -90,6 +94,10 @@ export function* loadProfile(
     yield* checkBackendProfile(backendProfile);
     return backendProfile;
   } catch (e) {
+    if (e === "max-retries") {
+      // This comment is useful to be aware of this king of exception.
+      // Only for my onboarding purpose [-;
+    }
     yield* put(profileLoadFailure(convertUnknownToError(e)));
   }
   return O.none;
