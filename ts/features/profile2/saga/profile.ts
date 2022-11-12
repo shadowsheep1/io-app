@@ -23,15 +23,15 @@ import { sessionTokenSelector } from "../../../store/reducers/authentication";
 import { authenticationSaga } from "../../../sagas/startup/authenticationSaga";
 import { initializeProfileRequest } from "../store/actions/profile";
 
-const BACKEND_PROFILE_LOAD_INTERVAL = (6 * 1000) as Millisecond;
+const BACKEND_PROFILE_RETRY_DELAY_INTERVAL = (6 * 1000) as Millisecond;
 const apiUrlPrefix: string = Config.API_URL_PREFIX;
 
 // This function listens for Profile refresh requests and calls the needed saga.
 export function* refreshProfileOnMountOfTheNewProfileRequestsSaga(): Iterator<ReduxSagaEffect> {
-  yield* takeLatest(getType(initializeProfileRequest), initializeProfile);
+  yield* takeLatest(getType(initializeProfileRequest), refreshProfile);
 }
 
-export function* initializeProfile(): Generator<ReduxSagaEffect, void, any> {
+export function* refreshProfile(): Generator<ReduxSagaEffect, void, any> {
   // Whether the user is currently logged in.
   const previousSessionToken: ReturnType<typeof sessionTokenSelector> =
     yield* select(sessionTokenSelector);
@@ -47,6 +47,7 @@ export function* initializeProfile(): Generator<ReduxSagaEffect, void, any> {
   );
 
   // Load the profile info
+  console.log("1. Call API");
   const maybeUserProfile: SagaCallReturnType<typeof loadProfile> = yield* call(
     loadProfile,
     backendClient.getProfile
@@ -57,7 +58,8 @@ export function* initializeProfile(): Generator<ReduxSagaEffect, void, any> {
      * If we didn't succeed, 
      * we try again after waiting some time.
      */
-    yield* delay(BACKEND_PROFILE_LOAD_INTERVAL);
+    console.log("3. Retrying...");
+    yield* delay(BACKEND_PROFILE_RETRY_DELAY_INTERVAL);
     yield* put(initializeProfileRequest());
   }
 }
@@ -76,27 +78,50 @@ export function* loadProfile(
       response,
       E.foldW(
         reason => {
+          /**
+           * Here we cames even when we get a responso with a status error type,
+           * different from the ones of our return types.
+           * Here for example we manage only:
+           * - 200
+           * - 400  
+           * - 401 
+           * - 429 
+           * - 500 
+           */
+          console.log(`2.💥 Error ${readablePrivacyReport(reason)}`);
           throw Error(readablePrivacyReport(reason));
         },
         response => {
+          console.log("🙈 Hi, there! Here I am!!!");
           if (response.status === 200) {
             return O.some(response.value);
           }
           if (response.status === 401) {
             return O.none;
           }
+          /**
+           * Here we come for all other "known" status code: 400, 500. 
+           * 429 is known, but it seems to be managed differently (by the API client).
+           * For example, having a Server Error 500,
+           * but the JSON derserializer expect a JSON Body.
+           */
+          console.log("2.2 status code != 200 | 401");
           throw response
             ? Error(`response status ${response.status}`)
             : Error(I18n.t("profile.errors.load"));
         }
       )
     );
+    console.log("2.1 Check result");
     yield* checkBackendProfile(backendProfile);
     return backendProfile;
   } catch (e) {
     if (e === "max-retries") {
       // This comment is useful to be aware of this king of exception.
       // Only for my onboarding purpose [-;
+      console.log("max-retries");
+    } else {
+      console.log(`4. Outer exception ${e}`);
     }
     yield* put(profileLoadFailure(convertUnknownToError(e)));
   }
@@ -105,8 +130,10 @@ export function* loadProfile(
 
 function* checkBackendProfile(profile: O.Option<InitializedProfile>) {
   if (O.isSome(profile)) {
+    console.log(`2.1.1 Success 🚀 ${profile.value}`);
     yield* put(profileLoadSuccess(profile.value));
   } else {
+    console.log("2.1.1 Expired ⏰");
     yield* put(sessionExpired());
   }
 }
