@@ -306,7 +306,7 @@ profile:
     dumpAsyncStorage: Scarica contenuto di AsyncStorage
     contextualHelpTitle: Cosa puoi fare nel tuo Profilo
     contextualHelpContent: !include profile/profile_account_main.md
-    contextualHelpContent2: !include profile/profile_account_main2.md
+    contextualNewHelpContent: !include profile/profile_new_account_page_main.md
     developerModeOn: Modalità sviluppatore attivata
     cache:
       alert: Vuoi davvero eliminare la cache?

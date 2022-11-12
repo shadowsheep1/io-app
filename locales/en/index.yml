@@ -306,7 +306,7 @@ profile:
     dumpAsyncStorage: Dump AsyncStorage content to console
     contextualHelpTitle: What you can do in your Profile
     contextualHelpContent: !include profile/profile_account_main.md
-    contextualHelpContent2: !include profile/profile_account_main2.md
+    contextualNewHelpContent: !include profile/profile_new_account_page_main.md
     developerModeOn: Developer mode enabled
     cache:
       alert: Are you sure you want to clear the cache?

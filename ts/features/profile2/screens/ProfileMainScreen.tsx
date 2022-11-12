@@ -51,7 +51,7 @@ export type ContextualHelpPropsMarkdown = {
 
 const contextualHelpMarkdown: ContextualHelpPropsMarkdown = {
   title: "profile.main.contextualHelpTitle",
-  body: "profile.main.contextualHelpContent2"
+  body: "profile.main.contextualNewHelpContent"
 };
 
 const ProfileMainScreen2 = (props: Props) => {
