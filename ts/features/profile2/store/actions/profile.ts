@@ -1,6 +1,6 @@
 import { ActionType, createStandardAction } from "typesafe-actions";
 
-export const initializeProfileRequest =
-  createStandardAction("INITIALIZE_PROFILE")();
+export const refreshUserProfileDataRequest =
+  createStandardAction("REFRESH_USER_PROFILE_DATA_REQUEST")();
 
-export type Profile2Actions = ActionType<typeof initializeProfileRequest>;
+export type  RefreshUserProfileDataAction = ActionType<typeof refreshUserProfileDataRequest>;

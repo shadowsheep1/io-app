@@ -26,7 +26,7 @@ import {
 import NameSurnameIcon from "../../../../img/assistance/nameSurname.svg";
 import FiscalCodeIcon from "../../../../img/assistance/fiscalCode.svg";
 import EmailIcon from "../../../../img/assistance/email.svg";
-import { initializeProfileRequest } from "../store/actions/profile";
+import { refreshUserProfileDataRequest } from "../store/actions/profile";
 
 type Props = ReturnType<typeof mapStateToProps>;
 
@@ -59,7 +59,7 @@ const ProfileMainScreen2 = (props: Props) => {
   const dispatch = useDispatch();
 
   React.useEffect(() => {
-    dispatch(initializeProfileRequest());
+    dispatch(refreshUserProfileDataRequest());
   }, []);
 
   return (

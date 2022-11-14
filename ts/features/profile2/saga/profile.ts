@@ -21,14 +21,14 @@ import { convertUnknownToError } from "../../../utils/errors";
 import { readablePrivacyReport } from "../../../utils/reporters";
 import { sessionTokenSelector } from "../../../store/reducers/authentication";
 import { authenticationSaga } from "../../../sagas/startup/authenticationSaga";
-import { initializeProfileRequest } from "../store/actions/profile";
+import { refreshUserProfileDataRequest } from "../store/actions/profile";
 
 const BACKEND_PROFILE_RETRY_DELAY_INTERVAL = (6 * 1000) as Millisecond;
 const apiUrlPrefix: string = Config.API_URL_PREFIX;
 
 // This function listens for Profile refresh requests and calls the needed saga.
 export function* refreshProfileOnMountOfTheNewProfilePageSaga(): Iterator<ReduxSagaEffect> {
-  yield* takeLatest(getType(initializeProfileRequest), refreshProfile);
+  yield* takeLatest(getType(refreshUserProfileDataRequest), refreshProfile);
 }
 
 export function* refreshProfile(): Generator<ReduxSagaEffect, void, any> {
@@ -58,7 +58,7 @@ export function* refreshProfile(): Generator<ReduxSagaEffect, void, any> {
      * we try again after waiting some time.
      */
     yield* delay(BACKEND_PROFILE_RETRY_DELAY_INTERVAL);
-    yield* put(initializeProfileRequest());
+    yield* put(refreshUserProfileDataRequest());
   }
 }
 
