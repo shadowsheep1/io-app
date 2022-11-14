@@ -65,13 +65,13 @@ const ProfileMainScreen2 = (props: Props) => {
       contextualHelpMarkdown={contextualHelpMarkdown}
     >
       <ScreenContent title={title} >
-        {screenContent(props)}
+        <ProfileScreenContent {...props} />
       </ScreenContent>
     </BaseScreenComponent>
   );
 };
 
-function screenContent(props: Props) {
+function ProfileScreenContent(props: Props) {
   const { nameSurname, profileEmail, fiscalCode } = props;
   const style = StyleSheet.create({
     list: {
