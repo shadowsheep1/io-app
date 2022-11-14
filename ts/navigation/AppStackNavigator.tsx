@@ -180,7 +180,8 @@ const InnerNavigationContainer = (props: { children: React.ReactElement }) => {
             [ROUTES.MESSAGES_HOME]: "messages",
             [ROUTES.WALLET_HOME]: "wallet",
             [ROUTES.SERVICES_HOME]: "services",
-            [ROUTES.PROFILE_MAIN]: "profile"
+            [ROUTES.PROFILE_MAIN]: "profile",
+            [ROUTES.PROFILE_MAIN2]: "profile2"
           }
         },
         [ROUTES.PROFILE_NAVIGATOR]: {
