@@ -77,7 +77,7 @@ export function* loadProfile(
       E.foldW(
         reason => {
           /**
-           * Here we cames even when we get a responso with a status error type,
+           * Here we comes even when we get a responso with a status error type,
            * different from the ones of our return types.
            * Here for example we manage only:
            * - 200
