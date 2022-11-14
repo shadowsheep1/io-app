@@ -22,13 +22,15 @@ type Props = {
   fiscalCode: string | undefined
 }
 
-export function ProfileScreenContent(props: Props) {
-  const { nameSurname, profileEmail, fiscalCode } = props;
-  const style = StyleSheet.create({
+const style = StyleSheet.create({
     list: {
       marginTop: 8
     }
   });
+  
+export function ProfileScreenContent(props: Props) {
+  const { nameSurname, profileEmail, fiscalCode } = props;
+  
   return <List
     style={style.list}
     withContentLateralPadding>
