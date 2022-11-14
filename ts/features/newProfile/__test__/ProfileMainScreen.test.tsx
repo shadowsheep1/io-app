@@ -15,9 +15,9 @@ import { appReducer } from "../../../store/reducers";
 import { GlobalState } from "../../../store/reducers/types";
 import { renderScreenFakeNavRedux } from "../../../utils/testWrapper";
 import mockedProfile from "../../../__mocks__/initializedProfile";
-import ProfileMainScreen2 from "../screens/ProfileMainScreen";
+import ProfileMainScreen from "../screens/ProfileMainScreen";
 
-describe("Test ProfileMainScreen2", () => {
+describe("Test NewProfileMainScreen", () => {
   jest.useFakeTimers();
   it("should be not null", () => {
     const { component } = renderComponent();
@@ -93,7 +93,7 @@ const renderComponent = () => {
 
   return {
     component: renderScreenFakeNavRedux<GlobalState>(
-      () => <ProfileMainScreen2 />,
+      () => <ProfileMainScreen />,
       ROUTES.PROFILE_MAIN2,
       {},
       store
