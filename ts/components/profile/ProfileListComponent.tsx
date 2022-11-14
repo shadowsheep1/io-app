@@ -4,7 +4,7 @@ import {
 } from "react-native";
 import { View } from "native-base";
 import { SvgProps } from "react-native-svg";
-import ListItemComponent from "../../components/screens/ListItemComponent";
+import ListItemComponent from "../screens/ListItemComponent";
 
 const style = StyleSheet.create({
     listItem: {
