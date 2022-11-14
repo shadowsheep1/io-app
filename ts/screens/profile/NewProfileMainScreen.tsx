@@ -45,7 +45,7 @@ const contextualHelpMarkdown: ContextualHelpPropsMarkdown = {
   body: "profile.main.contextualHelpContent2"
 };
 
-const ProfileMainScreen2 = (props: Props) => {
+const NewProfileMainScreen = (props: Props) => {
   const title = I18n.t("profile.main.title");
   return (
     <BaseScreenComponent
@@ -63,4 +63,4 @@ const ProfileMainScreen2 = (props: Props) => {
 
 export default connect(
   mapStateToProps
-)(withLightModalContext(ProfileMainScreen2));
+)(withLightModalContext(NewProfileMainScreen));
