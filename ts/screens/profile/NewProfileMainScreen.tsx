@@ -2,7 +2,7 @@ import { connect } from "react-redux";
 import * as React from "react";
 import I18n from "../../i18n";
 import BaseScreenComponent from "../../components/screens/BaseScreenComponent";
-import { ProfileScreenContent } from "../../components/profile/ProfileScreenContent"
+import { ProfileScreenContent } from "../../components/profile/ProfileScreenContent";
 import { TranslationKeys } from "../../../locales/locales";
 import {
   isLoggedIn,

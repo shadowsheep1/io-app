@@ -6,21 +6,21 @@ import * as O from "fp-ts/lib/Option";
 import { pipe } from "fp-ts/lib/function";
 import { List } from "native-base";
 import I18n from "../../i18n";
-import { ProfileListComponent } from "./ProfileScreenComponent";
 import NameSurnameIcon from "../../../img/assistance/nameSurname.svg";
 import FiscalCodeIcon from "../../../img/assistance/fiscalCode.svg";
 import EmailIcon from "../../../img/assistance/email.svg";
 import { SessionToken } from "../../types/SessionToken";
+import { ProfileListComponent } from "./ProfileScreenComponent";
 
 type Props = {
-  sessionToken: SessionToken | undefined,
-  walletToken: string | undefined,
-  profileEmail: O.Option<string>,
-  isEmailValidated: boolean,  
-  hasProfileEmail: boolean,
-  nameSurname: string | undefined,
-  fiscalCode: string | undefined
-}
+  sessionToken: SessionToken | undefined;
+  walletToken: string | undefined;
+  profileEmail: O.Option<string>;
+  isEmailValidated: boolean;  
+  hasProfileEmail: boolean;
+  nameSurname: string | undefined;
+  fiscalCode: string | undefined;
+};
 
 const style = StyleSheet.create({
     list: {
