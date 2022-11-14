@@ -10,7 +10,7 @@ import NameSurnameIcon from "../../../img/assistance/nameSurname.svg";
 import FiscalCodeIcon from "../../../img/assistance/fiscalCode.svg";
 import EmailIcon from "../../../img/assistance/email.svg";
 import { SessionToken } from "../../types/SessionToken";
-import { ProfileListComponent } from "./ProfileScreenComponent";
+import { ProfileListComponent } from "./ProfileListComponent";
 
 type Props = {
   sessionToken: SessionToken | undefined;
