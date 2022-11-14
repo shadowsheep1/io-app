@@ -3,7 +3,7 @@
  */
 import { all, call } from "typed-redux-saga/macro";
 import versionInfoSaga from "../common/versionInfo/saga/versionInfo";
-import { refreshProfileOnMountOfTheNewProfilePageSaga } from "../features/profile2/saga/profile";
+import { refreshProfileOnMountOfTheNewProfilePageSaga } from "../features/newProfile/saga/profile";
 import backendStatusSaga from "./backendStatus";
 import { watchContentSaga } from "./contentLoaders";
 import { loadSystemPreferencesSaga } from "./preferences";
