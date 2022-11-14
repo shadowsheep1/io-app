@@ -2,20 +2,11 @@ import * as React from "react";
 import {
   StyleSheet,
 } from "react-native";
-import { List, View } from "native-base";
+import { View } from "native-base";
 import { SvgProps } from "react-native-svg";
 import ListItemComponent from "../../components/screens/ListItemComponent";
 
-// TODO: manage profile icons and study flex (see if there is a standard IO Theme
-export const ProfileListComponent = (props: {
-  Icon?: React.FC<SvgProps>;
-  title: string;
-  subTitle: string | undefined;
-  testID: string;
-}) => {
-  const { Icon, title, subTitle, testID } = props;
-  const iconProps = { width: 28, height: "auto" };
-  const style = StyleSheet.create({
+const style = StyleSheet.create({
     listItem: {
       flex: 1,
       flexDirection: "row",
@@ -30,6 +21,17 @@ export const ProfileListComponent = (props: {
       flexDirection: "column",
     }
   });
+  const iconProps = { width: 28, height: "auto" };
+
+// TODO: manage profile icons and study flex (see if there is a standard IO Theme
+export const ProfileListComponent = (props: {
+  Icon?: React.FC<SvgProps>;
+  title: string;
+  subTitle: string | undefined;
+  testID: string;
+}) => {
+  const { Icon, title, subTitle, testID } = props;
+  
   return (
     <View style={style.listItem}>
       {Icon && (<Icon {...iconProps} style={style.iconItem} />)}
