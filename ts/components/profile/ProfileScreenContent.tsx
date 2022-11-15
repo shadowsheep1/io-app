@@ -12,7 +12,7 @@ import EmailIcon from "../../../img/assistance/email.svg";
 import { SessionToken } from "../../types/SessionToken";
 import { ProfileListComponent } from "./ProfileListComponent";
 import { ProfileSwitchListComponent } from "./ProfileSwitchListComponent";
-import { pot } from "@pagopa/ts-commons";
+import * as pot from "@pagopa/ts-commons/lib/pot";
 
 type Props = {
   sessionToken: SessionToken | undefined;
@@ -63,7 +63,7 @@ export function ProfileScreenContent(props: Props) {
     )}
     {/* Show deleting user profile status switch */}
     {profileEmail && (<ProfileSwitchListComponent
-      title=""
+      title={I18n.t("profile.data.list.deletionStatus")}
       value={pot.none}
       testID="profileDeletionStatus" />
     )}

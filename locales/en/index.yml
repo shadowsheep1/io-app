@@ -448,6 +448,7 @@ profile:
       fiscalCode: Fiscal code 
       need_validate: To be validated
       nameSurname: Name and surname
+      deletionStatus: Profile deletion status
       spid:
         headerTitle: SPID data
         email: SPID email
