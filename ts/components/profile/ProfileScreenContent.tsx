@@ -11,6 +11,8 @@ import FiscalCodeIcon from "../../../img/assistance/fiscalCode.svg";
 import EmailIcon from "../../../img/assistance/email.svg";
 import { SessionToken } from "../../types/SessionToken";
 import { ProfileListComponent } from "./ProfileListComponent";
+import { ProfileSwitchListComponent } from "./ProfileSwitchListComponent";
+import { pot } from "@pagopa/ts-commons";
 
 type Props = {
   sessionToken: SessionToken | undefined;
@@ -58,6 +60,12 @@ export function ProfileScreenContent(props: Props) {
         O.getOrElse(() => I18n.t("global.remoteStates.notAvailable"))
       )}
       testID="email" />
+    )}
+    {/* Show deleting user profile status switch */}
+    {profileEmail && (<ProfileSwitchListComponent
+      title=""
+      value={pot.none}
+      testID="profileDeletionStatus" />
     )}
   </List>;
 }
