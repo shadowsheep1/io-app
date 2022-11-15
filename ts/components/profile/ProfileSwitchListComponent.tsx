@@ -35,10 +35,6 @@ const style = StyleSheet.create({
     flex: 1,
     flexDirection: "column",
   },
-  spacingBase: {
-    paddingTop: 6,
-    paddingRight: customVariables.spacingBase
-  },
   flexRow: {
     flexDirection: "row",
     justifyContent: "space-between"

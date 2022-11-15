@@ -5,34 +5,70 @@ import {
 import * as O from "fp-ts/lib/Option";
 import { pipe } from "fp-ts/lib/function";
 import { List } from "native-base";
+import * as pot from "@pagopa/ts-commons/lib/pot";
 import I18n from "../../i18n";
 import NameSurnameIcon from "../../../img/assistance/nameSurname.svg";
 import FiscalCodeIcon from "../../../img/assistance/fiscalCode.svg";
 import EmailIcon from "../../../img/assistance/email.svg";
 import { SessionToken } from "../../types/SessionToken";
+import { UserDataProcessing } from "../../../definitions/backend/UserDataProcessing";
 import { ProfileListComponent } from "./ProfileListComponent";
 import { ProfileSwitchListComponent } from "./ProfileSwitchListComponent";
-import * as pot from "@pagopa/ts-commons/lib/pot";
 
 type Props = {
   sessionToken: SessionToken | undefined;
   walletToken: string | undefined;
   profileEmail: O.Option<string>;
-  isEmailValidated: boolean;  
+  isEmailValidated: boolean;
   hasProfileEmail: boolean;
   nameSurname: string | undefined;
   fiscalCode: string | undefined;
+  userDataDeletionStatus: pot.Pot<
+    UserDataProcessing | undefined,
+    Error
+  >;
+  isUserDataDeletionStatusLoading: boolean;
 };
 
 const style = StyleSheet.create({
-    list: {
-      marginTop: 8
+  list: {
+    marginTop: 8
+  }
+});
+
+export function ProfileScreenContent(props: Props) {
+  const { nameSurname,
+    profileEmail,
+    fiscalCode,
+    userDataDeletionStatus,
+    isUserDataDeletionStatusLoading
+  } = props;
+
+  /*
+    See if there's a better way to do that!
+    
+    Conversion between `pot.Pot<UserDataProcessing | undefined, Error>` 
+    to `pot.Pot<boolean, Error>`, to be used by our RemoteSwitch
+  */
+  const userDataDeletionSwitchStatus = isUserDataDeletionStatusLoading
+    ? pot.none
+    : pot.some(
+      pot.isSome(userDataDeletionStatus)
+        ? userDataDeletionStatus.value?.status !== undefined
+        : false
+    );
+
+  // FIX: to be removed!
+  React.useEffect(() => {
+    if (pot.isSome(userDataDeletionStatus)) {
+      console.log(`🙈 rehydration userDataDeletionStatus: ${userDataDeletionStatus.value?.status}`);
+    }
+    console.log(`rehydration isUserDataDeletionStatusLoading: ${isUserDataDeletionStatusLoading}`);
+    if (pot.isSome(userDataDeletionSwitchStatus)) {
+      console.log(`rehydration userDataDeletionSwitchStatus: ${userDataDeletionSwitchStatus.value}`);
     }
   });
-  
-export function ProfileScreenContent(props: Props) {
-  const { nameSurname, profileEmail, fiscalCode } = props;
-  
+
   return <List
     style={style.list}
     withContentLateralPadding>
@@ -64,7 +100,7 @@ export function ProfileScreenContent(props: Props) {
     {/* Show deleting user profile status switch */}
     {profileEmail && (<ProfileSwitchListComponent
       title={I18n.t("profile.data.list.deletionStatus")}
-      value={pot.none}
+      value={userDataDeletionSwitchStatus}
       testID="profileDeletionStatus" />
     )}
   </List>;

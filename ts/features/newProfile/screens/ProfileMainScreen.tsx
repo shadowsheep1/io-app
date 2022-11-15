@@ -1,4 +1,5 @@
 import { connect, useDispatch } from "react-redux"; import * as React from "react";
+import * as pot from "@pagopa/ts-commons/lib/pot";
 import I18n from "../../../i18n";
 import BaseScreenComponent from "../../../components/screens/BaseScreenComponent";
 import { TranslationKeys } from "../../../../locales/locales";
@@ -10,9 +11,6 @@ import { GlobalState } from "../../../store/reducers/types";
 import { withLightModalContext } from "../../../components/helpers/withLightModalContext";
 import ScreenContent from "../../../components/screens/ScreenContent";
 import { Dispatch } from "../../../store/actions/types";
-import { UserDataProcessingChoiceEnum } from "../../../../definitions/backend/UserDataProcessingChoice";
-import { UserDataProcessingStatusEnum } from "../../../../definitions/backend/UserDataProcessingStatus";
-import { withLoadingSpinner } from "../../../components/helpers/withLoadingSpinner";
 import {
   hasProfileEmailSelector,
   isProfileEmailValidatedSelector,
@@ -20,16 +18,19 @@ import {
   profileNameSurnameSelector,
   profileFiscalCodeSelector
 } from "../../../store/reducers/profile";
+import { UserDataProcessingChoiceEnum } from "../../../../definitions/backend/UserDataProcessingChoice";
 import {
   deleteUserDataProcessing,
   loadUserDataProcessing,
   resetUserDataProcessingRequest,
   upsertUserDataProcessing
 } from "../../../store/actions/userDataProcessing";
+import { userDataProcessingSelector } from "../../../store/reducers/userDataProcessing";
 import { refreshUserProfileDataRequest } from "../store/actions/profile";
 import { ProfileScreenContent } from "../../../components/profile/ProfileScreenContent";
 
 type Props = ReturnType<typeof mapStateToProps> &
+  ReturnType<typeof mapStateToProps> &
   ReturnType<typeof mapDispatchToProps>;
 
 const mapStateToProps = (state: GlobalState) => ({
@@ -43,17 +44,21 @@ const mapStateToProps = (state: GlobalState) => ({
   isEmailValidated: isProfileEmailValidatedSelector(state),
   hasProfileEmail: hasProfileEmailSelector(state),
   nameSurname: profileNameSurnameSelector(state),
-  fiscalCode: profileFiscalCodeSelector(state)
+  fiscalCode: profileFiscalCodeSelector(state),
+  userDataDeletionStatus: userDataProcessingSelector(state).DELETE,
+  isUserDataDeletionStatusLoading:
+    (pot.isNone(userDataProcessingSelector(state).DELETE) &&
+      pot.isLoading(userDataProcessingSelector(state).DELETE))
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
-  loadUserDataRequest: (choice: UserDataProcessingChoiceEnum) =>
+  dispatchLoadUserDataRequest: (choice: UserDataProcessingChoiceEnum) =>
     dispatch(loadUserDataProcessing.request(choice)),
-  upsertUserDataProcessing: (choice: UserDataProcessingChoiceEnum) =>
+  dispatchUpsertUserDataProcessing: (choice: UserDataProcessingChoiceEnum) =>
     dispatch(upsertUserDataProcessing.request(choice)),
-  abortUserDataProcessing: (choice: UserDataProcessingChoiceEnum) =>
+  dispatchAbortUserDataProcessing: (choice: UserDataProcessingChoiceEnum) =>
     dispatch(deleteUserDataProcessing.request(choice)),
-  resetRequest: (choice: UserDataProcessingChoiceEnum) =>
+  dispatchResetRequest: (choice: UserDataProcessingChoiceEnum) =>
     dispatch(resetUserDataProcessingRequest(choice))
 });
 
@@ -70,7 +75,7 @@ const contextualHelpMarkdown: ContextualHelpPropsMarkdown = {
 const ProfileMainScreen = (props: Props) => {
   const title = I18n.t("profile.main.title");
   const dispatch = useDispatch();
-  const { loadUserDataRequest } = props;
+  const { dispatchLoadUserDataRequest } = props;
 
   React.useEffect(() => {
     /**
@@ -83,7 +88,7 @@ const ProfileMainScreen = (props: Props) => {
      * Backend service return 404 (for unset value) or 200 (for a set value).
      * => This comment is only for my onboarding purpose.
      */
-    loadUserDataRequest(UserDataProcessingChoiceEnum.DELETE);
+    dispatchLoadUserDataRequest(UserDataProcessingChoiceEnum.DELETE);
   }, []);
 
   return (
