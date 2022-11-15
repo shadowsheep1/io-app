@@ -1,5 +1,4 @@
-import { connect, useDispatch } from "react-redux";
-import * as React from "react";
+import { connect, useDispatch } from "react-redux"; import * as React from "react";
 import I18n from "../../../i18n";
 import BaseScreenComponent from "../../../components/screens/BaseScreenComponent";
 import { TranslationKeys } from "../../../../locales/locales";
@@ -10,6 +9,10 @@ import {
 import { GlobalState } from "../../../store/reducers/types";
 import { withLightModalContext } from "../../../components/helpers/withLightModalContext";
 import ScreenContent from "../../../components/screens/ScreenContent";
+import { Dispatch } from "../../../store/actions/types";
+import { UserDataProcessingChoiceEnum } from "../../../../definitions/backend/UserDataProcessingChoice";
+import { UserDataProcessingStatusEnum } from "../../../../definitions/backend/UserDataProcessingStatus";
+import { withLoadingSpinner } from "../../../components/helpers/withLoadingSpinner";
 import {
   hasProfileEmailSelector,
   isProfileEmailValidatedSelector,
@@ -17,10 +20,17 @@ import {
   profileNameSurnameSelector,
   profileFiscalCodeSelector
 } from "../../../store/reducers/profile";
+import {
+  deleteUserDataProcessing,
+  loadUserDataProcessing,
+  resetUserDataProcessingRequest,
+  upsertUserDataProcessing
+} from "../../../store/actions/userDataProcessing";
 import { refreshUserProfileDataRequest } from "../store/actions/profile";
 import { ProfileScreenContent } from "../../../components/profile/ProfileScreenContent";
 
-type Props = ReturnType<typeof mapStateToProps>;
+type Props = ReturnType<typeof mapStateToProps> &
+  ReturnType<typeof mapDispatchToProps>;
 
 const mapStateToProps = (state: GlobalState) => ({
   sessionToken: isLoggedIn(state.authentication)
@@ -36,6 +46,17 @@ const mapStateToProps = (state: GlobalState) => ({
   fiscalCode: profileFiscalCodeSelector(state)
 });
 
+const mapDispatchToProps = (dispatch: Dispatch) => ({
+  loadUserDataRequest: (choice: UserDataProcessingChoiceEnum) =>
+    dispatch(loadUserDataProcessing.request(choice)),
+  upsertUserDataProcessing: (choice: UserDataProcessingChoiceEnum) =>
+    dispatch(upsertUserDataProcessing.request(choice)),
+  abortUserDataProcessing: (choice: UserDataProcessingChoiceEnum) =>
+    dispatch(deleteUserDataProcessing.request(choice)),
+  resetRequest: (choice: UserDataProcessingChoiceEnum) =>
+    dispatch(resetUserDataProcessingRequest(choice))
+});
+
 export type ContextualHelpPropsMarkdown = {
   title: TranslationKeys;
   body: TranslationKeys;
@@ -49,9 +70,20 @@ const contextualHelpMarkdown: ContextualHelpPropsMarkdown = {
 const ProfileMainScreen = (props: Props) => {
   const title = I18n.t("profile.main.title");
   const dispatch = useDispatch();
+  const { loadUserDataRequest } = props;
 
   React.useEffect(() => {
+    /**
+     * Refresh the user profile data from backend server.
+     * This is done under the hood.
+     */
     dispatch(refreshUserProfileDataRequest());
+    /**
+     * Check the user profile deletion status from server.
+     * Backend service return 404 (for unset value) or 200 (for a set value).
+     * => This comment is only for my onboarding purpose.
+     */
+    loadUserDataRequest(UserDataProcessingChoiceEnum.DELETE);
   }, []);
 
   return (
@@ -68,6 +100,6 @@ const ProfileMainScreen = (props: Props) => {
   );
 };
 
-export default connect(mapStateToProps)(
+export default connect(mapStateToProps, mapDispatchToProps)(
   withLightModalContext(ProfileMainScreen)
 );
