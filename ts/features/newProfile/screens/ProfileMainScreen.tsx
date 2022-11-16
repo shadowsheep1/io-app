@@ -1,4 +1,5 @@
-import { connect, useDispatch } from "react-redux"; import * as React from "react";
+import { connect, useDispatch } from "react-redux";
+import * as React from "react";
 import * as pot from "@pagopa/ts-commons/lib/pot";
 import I18n from "../../../i18n";
 import BaseScreenComponent from "../../../components/screens/BaseScreenComponent";
@@ -19,14 +20,12 @@ import {
   profileFiscalCodeSelector
 } from "../../../store/reducers/profile";
 import { UserDataProcessingChoiceEnum } from "../../../../definitions/backend/UserDataProcessingChoice";
-import {
-  loadUserDataProcessing,
-} from "../../../store/actions/userDataProcessing";
+import { loadUserDataProcessing } from "../../../store/actions/userDataProcessing";
 import { userDataProcessingSelector } from "../../../store/reducers/userDataProcessing";
 import { refreshUserProfileDataRequest } from "../store/actions/profile";
 import { ProfileScreenContent } from "../../../components/profile/ProfileScreenContent";
 
-type Props = ReturnType<typeof mapStateToProps>
+type Props = ReturnType<typeof mapStateToProps>;
 
 const mapStateToProps = (state: GlobalState) => ({
   sessionToken: isLoggedIn(state.authentication)
@@ -40,11 +39,11 @@ const mapStateToProps = (state: GlobalState) => ({
   hasProfileEmail: hasProfileEmailSelector(state),
   nameSurname: profileNameSurnameSelector(state),
   fiscalCode: profileFiscalCodeSelector(state),
-  loadUserDataProcessingAction: loadUserDataProcessing, 
+  loadUserDataProcessingAction: loadUserDataProcessing,
   userDataDeletionStatus: userDataProcessingSelector(state).DELETE,
   isUserDataDeletionStatusLoading:
-    (pot.isNone(userDataProcessingSelector(state).DELETE) &&
-      pot.isLoading(userDataProcessingSelector(state).DELETE))
+    pot.isNone(userDataProcessingSelector(state).DELETE) &&
+    pot.isLoading(userDataProcessingSelector(state).DELETE)
 });
 
 export type ContextualHelpPropsMarkdown = {
@@ -72,7 +71,9 @@ const ProfileMainScreen = (props: Props) => {
      * Backend service return 404 (for unset value) or 200 (for a set value).
      * => This comment is only for my onboarding purpose.
      */
-    dispatch(loadUserDataProcessing.request(UserDataProcessingChoiceEnum.DELETE));
+    dispatch(
+      loadUserDataProcessing.request(UserDataProcessingChoiceEnum.DELETE)
+    );
   }, []);
 
   return (

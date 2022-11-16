@@ -19,7 +19,7 @@ import { makeFontStyleObject } from "../../theme/fonts";
 const style = StyleSheet.create({
   listItem: {
     flex: 1,
-    flexDirection: "row",
+    flexDirection: "row"
   },
   innerListItem: {
     paddingLeft: 0,
@@ -29,11 +29,11 @@ const style = StyleSheet.create({
   iconItem: {
     flex: 1,
     marginEnd: 16,
-    marginStart: 8,
+    marginStart: 8
   },
   textSection: {
     flex: 1,
-    flexDirection: "column",
+    flexDirection: "column"
   },
   flexRow: {
     flexDirection: "row",
@@ -58,7 +58,7 @@ const style = StyleSheet.create({
   },
   disabledItem: {
     color: IOColors.grey
-  },
+  }
 });
 const iconProps = { width: 28, height: "auto" };
 
@@ -86,7 +86,7 @@ export const ProfileSwitchListComponent = (props: {
 
   return (
     <View style={style.listItem}>
-      {Icon && (<Icon {...iconProps} style={style.iconItem} />)}
+      {Icon && <Icon {...iconProps} style={style.iconItem} />}
       <View style={style.textSection}>
         <ListItem
           style={[style.innerListItem, style.flexRow, props.style]}
