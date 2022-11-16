@@ -20,18 +20,13 @@ import {
 } from "../../../store/reducers/profile";
 import { UserDataProcessingChoiceEnum } from "../../../../definitions/backend/UserDataProcessingChoice";
 import {
-  deleteUserDataProcessing,
   loadUserDataProcessing,
-  resetUserDataProcessingRequest,
-  upsertUserDataProcessing
 } from "../../../store/actions/userDataProcessing";
 import { userDataProcessingSelector } from "../../../store/reducers/userDataProcessing";
 import { refreshUserProfileDataRequest } from "../store/actions/profile";
 import { ProfileScreenContent } from "../../../components/profile/ProfileScreenContent";
 
-type Props = ReturnType<typeof mapStateToProps> &
-  ReturnType<typeof mapStateToProps> &
-  ReturnType<typeof mapDispatchToProps>;
+type Props = ReturnType<typeof mapStateToProps>
 
 const mapStateToProps = (state: GlobalState) => ({
   sessionToken: isLoggedIn(state.authentication)
@@ -45,21 +40,11 @@ const mapStateToProps = (state: GlobalState) => ({
   hasProfileEmail: hasProfileEmailSelector(state),
   nameSurname: profileNameSurnameSelector(state),
   fiscalCode: profileFiscalCodeSelector(state),
+  loadUserDataProcessingAction: loadUserDataProcessing, 
   userDataDeletionStatus: userDataProcessingSelector(state).DELETE,
   isUserDataDeletionStatusLoading:
     (pot.isNone(userDataProcessingSelector(state).DELETE) &&
       pot.isLoading(userDataProcessingSelector(state).DELETE))
-});
-
-const mapDispatchToProps = (dispatch: Dispatch) => ({
-  dispatchLoadUserDataRequest: (choice: UserDataProcessingChoiceEnum) =>
-    dispatch(loadUserDataProcessing.request(choice)),
-  dispatchUpsertUserDataProcessing: (choice: UserDataProcessingChoiceEnum) =>
-    dispatch(upsertUserDataProcessing.request(choice)),
-  dispatchAbortUserDataProcessing: (choice: UserDataProcessingChoiceEnum) =>
-    dispatch(deleteUserDataProcessing.request(choice)),
-  dispatchResetRequest: (choice: UserDataProcessingChoiceEnum) =>
-    dispatch(resetUserDataProcessingRequest(choice))
 });
 
 export type ContextualHelpPropsMarkdown = {
@@ -75,7 +60,6 @@ const contextualHelpMarkdown: ContextualHelpPropsMarkdown = {
 const ProfileMainScreen = (props: Props) => {
   const title = I18n.t("profile.main.title");
   const dispatch = useDispatch();
-  const { dispatchLoadUserDataRequest } = props;
 
   React.useEffect(() => {
     /**
@@ -88,7 +72,7 @@ const ProfileMainScreen = (props: Props) => {
      * Backend service return 404 (for unset value) or 200 (for a set value).
      * => This comment is only for my onboarding purpose.
      */
-    dispatchLoadUserDataRequest(UserDataProcessingChoiceEnum.DELETE);
+    dispatch(loadUserDataProcessing.request(UserDataProcessingChoiceEnum.DELETE));
   }, []);
 
   return (
@@ -105,6 +89,6 @@ const ProfileMainScreen = (props: Props) => {
   );
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(
+export default connect(mapStateToProps)(
   withLightModalContext(ProfileMainScreen)
 );

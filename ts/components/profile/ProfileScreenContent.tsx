@@ -15,6 +15,11 @@ import { UserDataProcessing } from "../../../definitions/backend/UserDataProcess
 import { ProfileListComponent } from "./ProfileListComponent";
 import { ProfileSwitchListComponent } from "./ProfileSwitchListComponent";
 import { showToast } from "../../utils/showToast";
+import {
+  loadUserDataProcessing,
+} from "../../store/actions/userDataProcessing";
+import { useDispatch } from "react-redux";
+import { UserDataProcessingChoiceEnum } from "../../../definitions/backend/UserDataProcessingChoice";
 
 type Props = {
   sessionToken: SessionToken | undefined;
@@ -45,6 +50,7 @@ export function ProfileScreenContent(props: Props) {
     isUserDataDeletionStatusLoading
   } = props;
 
+  const dispatch = useDispatch();
   /*
     See if there's a better way to do that!
     
@@ -53,22 +59,14 @@ export function ProfileScreenContent(props: Props) {
   */
  
   const deletionStatusRetrivalErrorMessage = I18n.t("profile.data.list.deletionStatus.retrivalError");
-  const userDataDeletionSwitchStatus = isUserDataDeletionStatusLoading
-    ? pot.none
-    : pot.isError(userDataDeletionStatus) 
-      ? pot.noneError(deletionStatusRetrivalErrorMessage)
-      : pot.some(
-        pot.isSome(userDataDeletionStatus)
-          ? userDataDeletionStatus.value?.status !== undefined
-          : false
-      );
+  const userDataDeletionSwitchStatus = mapUserDataDeletionStatusToRemoteSwitchStatus();
 
-  // FIX: to be removed!
   React.useEffect(() => {
     if (pot.isError(userDataDeletionStatus)) {
       const errorMessage = I18n.t("profile.data.list.deletionStatus.retrivalError");
       showToast(errorMessage);
     }
+    // FIX: to be removed!
     if (pot.isSome(userDataDeletionStatus)) {
       console.log(`🙈 rehydration userDataDeletionStatus: ${userDataDeletionStatus.value?.status}`);
     }
@@ -110,8 +108,26 @@ export function ProfileScreenContent(props: Props) {
     {profileEmail && (<ProfileSwitchListComponent
       title={I18n.t("profile.data.list.deletionStatus.title")}
       value={userDataDeletionSwitchStatus}
-      onRetry={() => console.log("🍀 Retry!")}
+      onRetry={() => {
+        dispatchUserDataDeletionStatusRetry()
+      }}
       testID="profileDeletionStatus" />
     )}
   </List>;
+
+  function dispatchUserDataDeletionStatusRetry() {
+    dispatch(loadUserDataProcessing.request(UserDataProcessingChoiceEnum.DELETE));
+  }      
+
+  function mapUserDataDeletionStatusToRemoteSwitchStatus() {
+    return isUserDataDeletionStatusLoading
+      ? pot.none
+      : pot.isError(userDataDeletionStatus)
+        ? pot.noneError(deletionStatusRetrivalErrorMessage)
+        : pot.some(
+          pot.isSome(userDataDeletionStatus)
+            ? userDataDeletionStatus.value?.status !== undefined
+            : false
+        );
+  }
 }
