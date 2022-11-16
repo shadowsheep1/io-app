@@ -12,7 +12,6 @@ import I18n from "../i18n";
 import PaginatedMessagesHomeScreen from "../screens/messages/paginated/MessagesHomeScreen";
 import ProfileMainScreen from "../features/newProfile/screens/ProfileMainScreen";
 import ServicesHomeScreen from "../screens/services/ServicesHomeScreen";
-import OldProfileMainScreen from "../screens/profile/ProfileMainScreen";
 import WalletHomeScreen from "../screens/wallet/WalletHomeScreen";
 import variables from "../theme/variables";
 import { MainTabParamsList } from "./params/MainTabParamsList";
@@ -87,14 +86,6 @@ export const MainTabNavigator = () => {
         options={{
           title: I18n.t("global.navigator.services"),
           tabBarIcon: ({ color }) => <ServiceTabIcon color={color} />
-        }}
-      />
-      <Tab.Screen
-        name={ROUTES.PROFILE_MAIN}
-        component={OldProfileMainScreen}
-        options={{
-          title: I18n.t("global.navigator.profile"),
-          tabBarIcon: ({ color }) => <ProfileTabIcon color={color} />
         }}
       />
       <Tab.Screen

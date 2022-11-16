@@ -4,18 +4,18 @@ import * as O from "fp-ts/lib/Option";
 import { pipe } from "fp-ts/lib/function";
 import { List } from "native-base";
 import * as pot from "@pagopa/ts-commons/lib/pot";
+import { useDispatch } from "react-redux";
 import I18n from "../../i18n";
 import NameSurnameIcon from "../../../img/assistance/nameSurname.svg";
 import FiscalCodeIcon from "../../../img/assistance/fiscalCode.svg";
 import EmailIcon from "../../../img/assistance/email.svg";
 import { SessionToken } from "../../types/SessionToken";
 import { UserDataProcessing } from "../../../definitions/backend/UserDataProcessing";
-import { ProfileListComponent } from "./ProfileListComponent";
-import { ProfileSwitchListComponent } from "./ProfileSwitchListComponent";
 import { showToast } from "../../utils/showToast";
 import { loadUserDataProcessing } from "../../store/actions/userDataProcessing";
-import { useDispatch } from "react-redux";
 import { UserDataProcessingChoiceEnum } from "../../../definitions/backend/UserDataProcessingChoice";
+import { ProfileSwitchListComponent } from "./ProfileSwitchListComponent";
+import { ProfileListComponent } from "./ProfileListComponent";
 
 type Props = {
   sessionToken: SessionToken | undefined;
@@ -60,24 +60,7 @@ export function ProfileScreenContent(props: Props) {
 
   React.useEffect(() => {
     if (pot.isError(userDataDeletionStatus)) {
-      const errorMessage = I18n.t(
-        "profile.data.list.deletionStatus.retrivalError"
-      );
-      showToast(errorMessage);
-    }
-    // FIX: to be removed!
-    if (pot.isSome(userDataDeletionStatus)) {
-      console.log(
-        `🙈 rehydration userDataDeletionStatus: ${userDataDeletionStatus.value?.status}`
-      );
-    }
-    console.log(
-      `rehydration isUserDataDeletionStatusLoading: ${isUserDataDeletionStatusLoading}`
-    );
-    if (pot.isSome(userDataDeletionSwitchStatus)) {
-      console.log(
-        `rehydration userDataDeletionSwitchStatus: ${userDataDeletionSwitchStatus.value}`
-      );
+      showToast(deletionStatusRetrivalErrorMessage );
     }
   });
 

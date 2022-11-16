@@ -11,7 +11,6 @@ import {
 import { GlobalState } from "../../../store/reducers/types";
 import { withLightModalContext } from "../../../components/helpers/withLightModalContext";
 import ScreenContent from "../../../components/screens/ScreenContent";
-import { Dispatch } from "../../../store/actions/types";
 import {
   hasProfileEmailSelector,
   isProfileEmailValidatedSelector,
