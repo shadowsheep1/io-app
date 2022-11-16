@@ -66,7 +66,7 @@ const iconProps = { width: 28, height: "auto" };
 export const ProfileSwitchListComponent = (props: {
   Icon?: React.FC<SvgProps>;
   title: string;
-  value: pot.Pot<boolean, Error>;
+  value: pot.Pot<boolean, unknown>;
   onRetry?: () => void;
   onPress?: () => void;
   onLongPress?: () => void;

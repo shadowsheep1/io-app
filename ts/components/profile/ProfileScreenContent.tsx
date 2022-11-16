@@ -51,13 +51,17 @@ export function ProfileScreenContent(props: Props) {
     Conversion between `pot.Pot<UserDataProcessing | undefined, Error>` 
     to `pot.Pot<boolean, Error>`, to be used by our RemoteSwitch
   */
+ 
+  const deletionStatusRetrivalErrorMessage = I18n.t("profile.data.list.deletionStatus.retrivalError");
   const userDataDeletionSwitchStatus = isUserDataDeletionStatusLoading
     ? pot.none
-    : pot.some(
-      pot.isSome(userDataDeletionStatus)
-        ? userDataDeletionStatus.value?.status !== undefined
-        : false
-    );
+    : pot.isError(userDataDeletionStatus) 
+      ? pot.noneError(deletionStatusRetrivalErrorMessage)
+      : pot.some(
+        pot.isSome(userDataDeletionStatus)
+          ? userDataDeletionStatus.value?.status !== undefined
+          : false
+      );
 
   // FIX: to be removed!
   React.useEffect(() => {
@@ -106,6 +110,7 @@ export function ProfileScreenContent(props: Props) {
     {profileEmail && (<ProfileSwitchListComponent
       title={I18n.t("profile.data.list.deletionStatus.title")}
       value={userDataDeletionSwitchStatus}
+      onRetry={() => console.log("🍀 Retry!")}
       testID="profileDeletionStatus" />
     )}
   </List>;
