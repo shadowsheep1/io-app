@@ -14,6 +14,7 @@ import { SessionToken } from "../../types/SessionToken";
 import { UserDataProcessing } from "../../../definitions/backend/UserDataProcessing";
 import { ProfileListComponent } from "./ProfileListComponent";
 import { ProfileSwitchListComponent } from "./ProfileSwitchListComponent";
+import { showToast } from "../../utils/showToast";
 
 type Props = {
   sessionToken: SessionToken | undefined;
@@ -60,6 +61,10 @@ export function ProfileScreenContent(props: Props) {
 
   // FIX: to be removed!
   React.useEffect(() => {
+    if (pot.isError(userDataDeletionStatus)) {
+      const errorMessage = I18n.t("profile.data.list.deletionStatus.retrivalError");
+      showToast(errorMessage);
+    }
     if (pot.isSome(userDataDeletionStatus)) {
       console.log(`🙈 rehydration userDataDeletionStatus: ${userDataDeletionStatus.value?.status}`);
     }
@@ -99,7 +104,7 @@ export function ProfileScreenContent(props: Props) {
     )}
     {/* Show deleting user profile status switch */}
     {profileEmail && (<ProfileSwitchListComponent
-      title={I18n.t("profile.data.list.deletionStatus")}
+      title={I18n.t("profile.data.list.deletionStatus.title")}
       value={userDataDeletionSwitchStatus}
       testID="profileDeletionStatus" />
     )}
