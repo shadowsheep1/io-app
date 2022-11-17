@@ -112,7 +112,7 @@ export const ProfileSwitchListComponent = (props: {
                   {props.title}
                 </Text>
               </View>
-              <RemoteSwitch {...props} />
+              <RemoteSwitch {...props} testID={`${props.testID}-remoteSwitch`}/>
             </View>
           </View>
         </ListItem>

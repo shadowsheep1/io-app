@@ -97,16 +97,14 @@ export function ProfileScreenContent(props: Props) {
         />
       )}
       {/* Show deleting user profile status switch */}
-      {profileEmail && (
-        <ProfileSwitchListComponent
-          title={I18n.t("profile.data.list.deletionStatus.title")}
-          value={userDataDeletionSwitchStatus}
-          onRetry={() => {
-            dispatchUserDataDeletionStatusRetry();
-          }}
-          testID="profileDeletionStatus"
-        />
-      )}
+      <ProfileSwitchListComponent
+        title={I18n.t("profile.data.list.deletionStatus.title")}
+        value={userDataDeletionSwitchStatus}
+        onRetry={() => {
+          dispatchUserDataDeletionStatusRetry();
+        }}
+        testID="profileDeletionStatus"
+      />
     </List>
   );
 
