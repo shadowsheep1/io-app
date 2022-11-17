@@ -85,9 +85,9 @@ describe("Test NewProfileMainScreen", () => {
     expect(component).not.toBeNull();
 
     const title = I18n.t("profile.data.list.deletionStatus.title");
-    const listItemComponent = component.queryAllByTestId("profileDeletionStatus")[0];
+    const listItemComponent = component.queryByTestId("profileDeletionStatus");
     expect(listItemComponent).not.toBeNull();
-    const switchComponent = component.queryAllByTestId("profileDeletionStatus-remoteSwitch")[0];
+    const switchComponent = component.queryByTestId("profileDeletionStatus-remoteSwitch");
     expect(switchComponent).not.toBeNull();
     expect(switchComponent).toHaveProperty("props.value", false);
     const listItemTitleComponent = component.queryByText(title);
