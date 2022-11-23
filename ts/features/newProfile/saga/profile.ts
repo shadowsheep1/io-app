@@ -112,9 +112,7 @@ export function* loadProfile(
            * For example, having a Server Error 500,
            * but the JSON derserializer expect a JSON Body.
            */
-          throw response
-            ? Error(`response status ${response.status}`)
-            : Error(I18n.t("profile.errors.load"));
+          throw Error(`response status ${response.status}`);
         }
       )
     );
