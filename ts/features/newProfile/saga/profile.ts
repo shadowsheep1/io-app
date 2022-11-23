@@ -4,7 +4,14 @@
 import * as E from "fp-ts/lib/Either";
 import { pipe } from "fp-ts/lib/function";
 import * as O from "fp-ts/lib/Option";
-import { delay, call, put, select, takeLatest } from "typed-redux-saga/macro";
+import {
+  delay,
+  call,
+  put,
+  select,
+  takeLatest,
+  fork
+} from "typed-redux-saga/macro";
 import Config from "react-native-config";
 import { getType } from "typesafe-actions";
 import { Millisecond } from "@pagopa/ts-commons/lib/units";
@@ -22,6 +29,7 @@ import { readablePrivacyReport } from "../../../utils/reporters";
 import { sessionTokenSelector } from "../../../store/reducers/authentication";
 import { authenticationSaga } from "../../../sagas/startup/authenticationSaga";
 import { refreshUserProfileDataRequest } from "../store/actions/profile";
+import { SessionToken } from "../../../types/SessionToken";
 
 const BACKEND_PROFILE_RETRY_DELAY_INTERVAL = (6 * 1000) as Millisecond;
 const apiUrlPrefix: string = Config.API_URL_PREFIX;
@@ -36,10 +44,13 @@ export function* refreshProfile(): Generator<ReduxSagaEffect, void, any> {
   const previousSessionToken: ReturnType<typeof sessionTokenSelector> =
     yield* select(sessionTokenSelector);
 
-  const sessionToken: SagaCallReturnType<typeof authenticationSaga> =
-    previousSessionToken
-      ? previousSessionToken
-      : yield* call(authenticationSaga);
+  var sessionToken: SessionToken;
+  if (previousSessionToken as SessionToken) {
+    sessionToken = previousSessionToken as SessionToken;
+  } else {
+    yield* put(sessionExpired());
+    return;
+  }
 
   const backendClient: ReturnType<typeof BackendClient> = BackendClient(
     apiUrlPrefix,
