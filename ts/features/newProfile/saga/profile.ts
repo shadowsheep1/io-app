@@ -5,19 +5,15 @@ import * as E from "fp-ts/lib/Either";
 import { pipe } from "fp-ts/lib/function";
 import * as O from "fp-ts/lib/Option";
 import {
-  delay,
   call,
   put,
   select,
   takeLatest,
-  fork
 } from "typed-redux-saga/macro";
 import Config from "react-native-config";
 import { getType } from "typesafe-actions";
-import { Millisecond } from "@pagopa/ts-commons/lib/units";
 import { InitializedProfile } from "../../../../definitions/backend/InitializedProfile";
 import { BackendClient } from "../../../api/backend";
-import I18n from "../../../i18n";
 import { sessionExpired } from "../../../store/actions/authentication";
 import {
   profileLoadFailure,
@@ -27,11 +23,10 @@ import { ReduxSagaEffect, SagaCallReturnType } from "../../../types/utils";
 import { convertUnknownToError } from "../../../utils/errors";
 import { readablePrivacyReport } from "../../../utils/reporters";
 import { sessionTokenSelector } from "../../../store/reducers/authentication";
-import { authenticationSaga } from "../../../sagas/startup/authenticationSaga";
 import { refreshUserProfileDataRequest } from "../store/actions/profile";
 import { SessionToken } from "../../../types/SessionToken";
+import { profileLoadRequest } from './../../../store/actions/profile';
 
-const BACKEND_PROFILE_RETRY_DELAY_INTERVAL = (6 * 1000) as Millisecond;
 const apiUrlPrefix: string = Config.API_URL_PREFIX;
 
 // This function listens for Profile refresh requests and calls the needed saga.
@@ -44,7 +39,7 @@ export function* refreshProfile(): Generator<ReduxSagaEffect, void, any> {
   const previousSessionToken: ReturnType<typeof sessionTokenSelector> =
     yield* select(sessionTokenSelector);
 
-  var sessionToken: SessionToken;
+  let sessionToken: SessionToken;
   if (previousSessionToken as SessionToken) {
     sessionToken = previousSessionToken as SessionToken;
   } else {
@@ -57,6 +52,9 @@ export function* refreshProfile(): Generator<ReduxSagaEffect, void, any> {
     sessionToken
   );
 
+  // Set profile as Loading
+  yield* put(profileLoadRequest());
+
   // Load the profile info
   const maybeUserProfile: SagaCallReturnType<typeof loadProfile> = yield* call(
     loadProfile,
@@ -64,12 +62,9 @@ export function* refreshProfile(): Generator<ReduxSagaEffect, void, any> {
   );
 
   if (O.isNone(maybeUserProfile)) {
-    /**
-     * If we didn't succeed,
-     * we try again after waiting some time.
-     */
-    yield* delay(BACKEND_PROFILE_RETRY_DELAY_INTERVAL);
-    yield* put(refreshUserProfileDataRequest());
+    yield* put(profileLoadFailure(
+      Error("Profile is None")
+    ));
   }
 }
 
