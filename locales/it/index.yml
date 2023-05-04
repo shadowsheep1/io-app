@@ -460,6 +460,8 @@ profile:
     spid_email:
       contextualHelpTitle: Questo dato è impostato nel tuo profilo SPID
       contextualHelpContent: !include profile/profile_data_spid_email.md
+    refresh_error:
+      message: Errore durante il caricamento del profilo dal server
   security:
     title: Sicurezza
     subtitle: Gestisci le modalità di autenticazione in app.

@@ -460,6 +460,8 @@ profile:
     spid_email:
       contextualHelpTitle: This data is set in your SPID profile
       contextualHelpContent: !include profile/profile_data_spid_email.md
+    refresh_error:
+      message: An error occurred refreshing data from server 
   security:
     title: Security
     subtitle: Manage in-app authentication methods.
