@@ -80,6 +80,19 @@ describe("Test NewProfileMainScreen", () => {
       expect(listItemComponent).toBeNull();
     }
   });
+  it("should render SwitchListItemComponent for the profile data deletion status with the right title and switch", () => {
+    const { component } = renderComponent();
+    expect(component).not.toBeNull();
+
+    const title = I18n.t("profile.data.list.deletionStatus.title");
+    const listItemComponent = component.queryByTestId("profileDeletionStatus");
+    expect(listItemComponent).not.toBeNull();
+    const switchComponent = component.queryByTestId("profileDeletionStatus-remoteSwitch");
+    expect(switchComponent).not.toBeNull();
+    expect(switchComponent).toHaveProperty("props.value", false);
+    const listItemTitleComponent = component.queryByText(title);
+    expect(listItemTitleComponent).toHaveTextContent(title);
+  });
 });
 
 const renderComponent = () => {

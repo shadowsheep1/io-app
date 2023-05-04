@@ -448,6 +448,9 @@ profile:
       fiscalCode: Fiscal code 
       need_validate: To be validated
       nameSurname: Name and surname
+      deletionStatus: 
+        title: Profile deletion status
+        retrivalError: An error occurred while submit your deletion request, please retry!
       spid:
         headerTitle: SPID data
         email: SPID email

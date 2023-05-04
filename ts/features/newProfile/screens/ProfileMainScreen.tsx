@@ -21,6 +21,9 @@ import {
   profileNameSurnameSelector,
   profileFiscalCodeSelector,
 } from "../../../store/reducers/profile";
+import { UserDataProcessingChoiceEnum } from "../../../../definitions/backend/UserDataProcessingChoice";
+import { loadUserDataProcessing } from "../../../store/actions/userDataProcessing";
+import { userDataProcessingSelector } from "../../../store/reducers/userDataProcessing";
 import { refreshUserProfileDataRequest } from "../store/actions/profile";
 import { ProfileScreenContent } from "../../../components/profile/ProfileScreenContent";
 import ActivityIndicator from "../../../components/ui/ActivityIndicator";
@@ -44,7 +47,12 @@ const mapStateToProps = (state: GlobalState) => ({
   isEmailValidated: isProfileEmailValidatedSelector(state),
   hasProfileEmail: hasProfileEmailSelector(state),
   nameSurname: profileNameSurnameSelector(state),
-  fiscalCode: profileFiscalCodeSelector(state)
+  fiscalCode: profileFiscalCodeSelector(state),
+  loadUserDataProcessingAction: loadUserDataProcessing,
+  userDataDeletionStatus: userDataProcessingSelector(state).DELETE,
+  isUserDataDeletionStatusLoading:
+    pot.isNone(userDataProcessingSelector(state).DELETE) &&
+    pot.isLoading(userDataProcessingSelector(state).DELETE)
 });
 
 export type ContextualHelpPropsMarkdown = {
@@ -123,7 +131,19 @@ const ProfileMainScreen = (props: Props) => {
 
   const dispatch = useDispatch();
   React.useEffect(() => {
+    /**
+     * Refresh the user profile data from backend server.
+     * This is done under the hood.
+     */
     dispatch(refreshUserProfileDataRequest());
+    /**
+     * Check the user profile deletion status from server.
+     * Backend service return 404 (for unset value) or 200 (for a set value).
+     * => This comment is only for my onboarding purpose.
+     */
+    dispatch(
+      loadUserDataProcessing.request(UserDataProcessingChoiceEnum.DELETE)
+    );
   }, []);
 
   return (
